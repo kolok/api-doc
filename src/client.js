@@ -49,64 +49,6 @@ var PageContent = React.createClass({
 
 // End of page content management
 
-// Main menu management
-
-var CategoryMenu = React.createClass({
-    getInitialState: function() {
-        return {categories: [{"id":1,"label":"WCM"},{"id":2,"label":"WAM static"}]};
-    },
-    componentDidMount: function() {
-        $.ajax({
-            url: this.props.url,
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
-                this.setState({categories: data});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
-    },
-    render: function() {
-        var Menu = this.state.categories.map( function(category) {
-            return (
-                <CategoryLink category={category} key={category.id}/>
-                );
-        });
-        return (
-            <div className="menu">
-            {Menu}
-            </div>
-            );
-    }
-});
-
-var CategoryLink = React.createClass({
-    getInitialState: function(){
-        return {
-            selected:''
-        }
-    },
-    setCategory: function(id) {
-        console.log(id);
-        this.setState({selected: id});
-//        this.props.onChangeFilter(filter);
-    },
-    isActive: function(value) {
-        return "menu-item " + ( ( value === this.state.selected ) ? 'active' : 'default' )
-    },
-    render: function() {
-        return (
-            <div className={this.isActive(this.props.category.id)} onClick={this.setCategory.bind(this, this.props.category.id)}>
-                {this.props.category.label}
-            </div>
-            );
-    }
-});
-
-// end of main menu management
-
 // Page title management
 
 var PageTitles = React.createClass({
@@ -151,13 +93,78 @@ function getTitles(content) {
 
 // End of page title management
 
+
+// Main menu management
+
+var CategoryMenu = React.createClass({
+    getInitialState: function() {
+        return {selectedCategory:'1',categories: []};
+    },
+    componentDidMount: function() {
+        $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({selectedCategory:this.state.selectedCategory,categories: data});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+    },
+    changeCategory: function(id){
+        this.setState({
+            categories: this.state.categories,
+            selectedCategory: id
+        });
+    },
+    render: function() {
+        var Menu = [];
+        this.state.categories.forEach((category) => {
+            Menu.push(
+                <CategoryLink selectedCategory={this.state.selectedCategory} onChangeCategory={this.changeCategory} category={category} key={category.id}/>
+                );
+        });
+        return (
+            <div className="menu">
+            {Menu}
+            </div>
+            );
+    }
+});
+
+var CategoryLink = React.createClass({
+    getInitialState: function(){
+        return {
+            selected:''
+        }
+    },
+    setCategory: function(id) {
+        this.setState({selected: id});
+        this.props.onChangeCategory(id);
+    },
+    isActive: function(value) {
+        return "menu-item " + ( ( value === this.props.selectedCategory ) ? 'active' : 'default' )
+    },
+    render: function() {
+        return (
+            <div className={this.isActive(this.props.category.id)} onClick={this.setCategory.bind(this, this.props.category.id)}>
+                {this.props.category.label}
+            </div>
+            );
+    }
+});
+
+// end of main menu management
+
 // Display all the page
 
 var ApiDoc = React.createClass({
     render: function() {
         return ( 
             <div className="main-page">
-                <CategoryMenu url="http://localhost:3000/categories" />
+                <CategoryMenu url="/categories" />
                 <div className="main-content">
                     <div className="left-panel">
                         <PageList pages={this.props.data.pages} />

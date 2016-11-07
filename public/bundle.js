@@ -100,66 +100,6 @@
 
 	// End of page content management
 
-	// Main menu management
-
-	var CategoryMenu = _react2.default.createClass({
-	    displayName: 'CategoryMenu',
-
-	    getInitialState: function getInitialState() {
-	        return { categories: [{ "id": 1, "label": "WCM" }, { "id": 2, "label": "WAM static" }] };
-	    },
-	    componentDidMount: function componentDidMount() {
-	        $.ajax({
-	            url: this.props.url,
-	            dataType: 'json',
-	            cache: false,
-	            success: function (data) {
-	                this.setState({ categories: data });
-	            }.bind(this),
-	            error: function (xhr, status, err) {
-	                console.error(this.props.url, status, err.toString());
-	            }.bind(this)
-	        });
-	    },
-	    render: function render() {
-	        var Menu = this.state.categories.map(function (category) {
-	            return _react2.default.createElement(CategoryLink, { category: category, key: category.id });
-	        });
-	        return _react2.default.createElement(
-	            'div',
-	            { className: 'menu' },
-	            Menu
-	        );
-	    }
-	});
-
-	var CategoryLink = _react2.default.createClass({
-	    displayName: 'CategoryLink',
-
-	    getInitialState: function getInitialState() {
-	        return {
-	            selected: ''
-	        };
-	    },
-	    setCategory: function setCategory(id) {
-	        console.log(id);
-	        this.setState({ selected: id });
-	        //        this.props.onChangeFilter(filter);
-	    },
-	    isActive: function isActive(value) {
-	        return "menu-item " + (value === this.state.selected ? 'active' : 'default');
-	    },
-	    render: function render() {
-	        return _react2.default.createElement(
-	            'div',
-	            { className: this.isActive(this.props.category.id), onClick: this.setCategory.bind(this, this.props.category.id) },
-	            this.props.category.label
-	        );
-	    }
-	});
-
-	// end of main menu management
-
 	// Page title management
 
 	var PageTitles = _react2.default.createClass({
@@ -208,6 +148,75 @@
 
 	// End of page title management
 
+
+	// Main menu management
+
+	var CategoryMenu = _react2.default.createClass({
+	    displayName: 'CategoryMenu',
+
+	    getInitialState: function getInitialState() {
+	        return { selectedCategory: '1', categories: [] };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        $.ajax({
+	            url: this.props.url,
+	            dataType: 'json',
+	            cache: false,
+	            success: function (data) {
+	                this.setState({ selectedCategory: this.state.selectedCategory, categories: data });
+	            }.bind(this),
+	            error: function (xhr, status, err) {
+	                console.error(this.props.url, status, err.toString());
+	            }.bind(this)
+	        });
+	    },
+	    changeCategory: function changeCategory(id) {
+	        this.setState({
+	            categories: this.state.categories,
+	            selectedCategory: id
+	        });
+	    },
+	    render: function render() {
+	        var _this = this;
+
+	        var Menu = [];
+	        this.state.categories.forEach(function (category) {
+	            Menu.push(_react2.default.createElement(CategoryLink, { selectedCategory: _this.state.selectedCategory, onChangeCategory: _this.changeCategory, category: category, key: category.id }));
+	        });
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'menu' },
+	            Menu
+	        );
+	    }
+	});
+
+	var CategoryLink = _react2.default.createClass({
+	    displayName: 'CategoryLink',
+
+	    getInitialState: function getInitialState() {
+	        return {
+	            selected: ''
+	        };
+	    },
+	    setCategory: function setCategory(id) {
+	        this.setState({ selected: id });
+	        this.props.onChangeCategory(id);
+	    },
+	    isActive: function isActive(value) {
+	        return "menu-item " + (value === this.props.selectedCategory ? 'active' : 'default');
+	    },
+	    render: function render() {
+	        return _react2.default.createElement(
+	            'div',
+	            { className: this.isActive(this.props.category.id), onClick: this.setCategory.bind(this, this.props.category.id) },
+	            this.props.category.label
+	        );
+	    }
+	});
+
+	// end of main menu management
+
 	// Display all the page
 
 	var ApiDoc = _react2.default.createClass({
@@ -217,7 +226,7 @@
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'main-page' },
-	            _react2.default.createElement(CategoryMenu, { url: 'http://localhost:3000/categories' }),
+	            _react2.default.createElement(CategoryMenu, { url: '/categories' }),
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'main-content' },
