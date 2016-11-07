@@ -31,6 +31,18 @@ app.get('/pages', function(req, res) {
     res.status(200).send(data.pages);
 });
 
+app.get('/category/:category_id/pages', function(req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    var pages = [];
+    for(var i = 0; i < data.pages.length; i++) { 
+        if (data.pages[i].category_id == req.params.category_id) {
+            pages.push(data.pages[i]);
+        }
+    }
+
+    res.status(200).send(pages);
+});
+
 app.get('/page/:id', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     if (data.pages[req.params.id -1] === undefined) {

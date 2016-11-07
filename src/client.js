@@ -2,13 +2,21 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 var $ = require("jquery");
 
-var PageList = React.createClass({
-    getInitialState: function() {
-        return {pages: []};
-    },
-    componentDidMount: function() {
+import CategoryMenu from "./category-menu"
+
+class PageList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {pages: []};
+    }
+    componentDidMount() {
+        var url = "/pages";
+        if (this.props.selectedCategory)
+        {
+            url = "/category/" + this.props.selectedCategory+"/pages";
+        }
         $.ajax({
-            url: this.props.url,
+            url: url,
             dataType: 'json',
             cache: false,
             success: function(data) {
@@ -18,8 +26,8 @@ var PageList = React.createClass({
                 console.error(this.props.url, status, err.toString());
             }.bind(this)
         });
-    },
-    render: function() {
+    }
+    render() {
         var PageLabelList = this.state.pages.map( function(page) {
             return (
                 <li className="page-label" key={page.id}>{page.label}</li>
@@ -31,15 +39,16 @@ var PageList = React.createClass({
             </ul>
             );
     }
-});
+};
 
 // Page content management
 
-var PageContent = React.createClass({
-    getInitialState: function() {
-        return {page: {}};
-    },
-    componentDidMount: function() {
+class PageContent extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {page: []};
+    }
+    componentDidMount() {
         $.ajax({
             url: this.props.url,
             dataType: 'json',
@@ -51,24 +60,25 @@ var PageContent = React.createClass({
                 console.error(this.props.url, status, err.toString());
             }.bind(this)
         });
-    },
-    render: function() {
+    }
+    render() {
         return (
             <div className="page-content" dangerouslySetInnerHTML={{__html: this.state.page.content}}>
             </div>
             );
     }
-});
+};
 
 // End of page content management
 
 // Page title management
 
-var PageTitles = React.createClass({
-    getInitialState: function() {
-        return {page: {}};
-    },
-    componentDidMount: function() {
+class PageTitles extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {page: []};
+    }
+    componentDidMount() {
         $.ajax({
             url: this.props.url,
             dataType: 'json',
@@ -80,8 +90,8 @@ var PageTitles = React.createClass({
                 console.error(this.props.url, status, err.toString());
             }.bind(this)
         });
-    },
-    render: function() {
+    }
+    render() {
         var matches = getTitles(this.state.page.content);
         var i = 0;
         var PageTitleList2 = matches.map( function(match){
@@ -99,15 +109,15 @@ var PageTitles = React.createClass({
             </ul>
             );
     }
-});
+};
 
-var PageTitle = React.createClass({
-    render: function() {
+class PageTitle extends React.Component {
+    render() {
             return (
                 <li className={this.props.classTag}>{this.props.titlePage}</li>
             );
     }
-});
+};
 
 function getTitles(content) {
     var myRegexp = /\<(h\d)\>([\w\s]*)\<\/h\d\>/;
@@ -123,87 +133,29 @@ function getTitles(content) {
 // End of page title management
 
 
-// Main menu management
-
-var CategoryMenu = React.createClass({
-    getInitialState: function() {
-        return {selectedCategory:'1',categories: []};
-    },
-    componentDidMount: function() {
-        $.ajax({
-            url: this.props.url,
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
-                this.setState({selectedCategory:this.state.selectedCategory,categories: data});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
-    },
-    changeCategory: function(id){
-        this.setState({
-            categories: this.state.categories,
-            selectedCategory: id
-        });
-        this.props.onUpdateCategory(id);
-    },
-    render: function() {
-        var Menu = [];
-        this.state.categories.forEach((category) => {
-            Menu.push(
-                <CategoryLink selectedCategory={this.state.selectedCategory} onChangeCategory={this.changeCategory} category={category} key={category.id}/>
-                );
-        });
-        return (
-            <div className="menu">
-            {Menu}
-            </div>
-            );
-    }
-});
-
-var CategoryLink = React.createClass({
-    setCategory: function(id) {
-        this.props.onChangeCategory(id);
-    },
-    isActive: function(value) {
-        return "menu-item " + ( ( value === this.props.selectedCategory ) ? 'active' : 'default' )
-    },
-    render: function() {
-        return (
-            <div className={this.isActive(this.props.category.id)} onClick={this.setCategory.bind(this, this.props.category.id)}>
-                {this.props.category.label}
-            </div>
-            );
-    }
-});
-
-// end of main menu management
-
 // Display all the page
 
-var ApiDoc = React.createClass({
-    getInitialState: function(){
-        return {
+class ApiDoc extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             selectedCategory:'',
             selectedPage:''
-        }
-    },
-    updateCategory: function(id) {
+        };
+    }
+    updateCategory(id) {
         this.setState({
             selectedCategory: id,
             selectedPage:''
         });
-    },
-    render: function() {
+    }
+    render() {
         return ( 
             <div className="main-page">
-                <CategoryMenu url="/categories" onUpdateCategory={this.updateCategory} />
+                <CategoryMenu url="/categories" onUpdateCategory={this.updateCategory.bind(this)} />
                 <div className="main-content">
                     <div className="left-panel">
-                        <PageList url="/pages" selectedCategory={this.state.selectedCategory} />
+                        <PageList url="category/1/pages" selectedCategory={this.state.selectedCategory} />
                     </div>
                     <div className="main-panel">
                         <PageContent url="/page/2" selectedPage={this.state.selectedPage} />
@@ -217,7 +169,7 @@ var ApiDoc = React.createClass({
             </div>
             );
     }
-});
+};
 
 ReactDOM.render(
   React.createElement(ApiDoc),
