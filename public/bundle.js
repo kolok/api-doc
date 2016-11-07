@@ -58,22 +58,27 @@
 
 	var $ = __webpack_require__(172);
 
-	var pages = [{ id: 1, category_id: 1, content: "<h1>WCM API doc</h1><h2>Getting started</h2><p>How do you start ?<br>please follow this step...</p>", parent_id: null, label: "WCM API doc" }, { id: 2, category_id: 1, content: "<h1>WCM structure</h1><h2>Authentication Structure</h2><p>structure description...</p><h2>WCM product Structure</h2><p>structure description...</p>", parent_id: 1, label: "WCM Structure" }, { id: 3, category_id: 1, content: "<h1>WCM routes</h1><h2>Account routes</h2><p>routes description</p>", parent_id: 1, label: "WCM API routes" }, { id: 4, category_id: 2, content: "<h1>WAM API doc</h1><h2>Getting started</h2><p>How do you start ?<br>please follow this step...</p>", parent_id: null, label: "WAM API doc" }];
-	var page = { id: 1, category_id: 1, content: "<h1>WCM API doc</h1><h2>Getting started</h2><p>How do you start ?<br>please follow this step...</p>", parent_id: null, label: "WCM API doc" };
-
-	var categories = [{ id: 1, label: "WCM" }, { id: 2, label: "WAM" }];
-
-	var data = {
-	    page: page,
-	    pages: pages,
-	    categories: categories
-	};
-
 	var PageList = _react2.default.createClass({
 	    displayName: 'PageList',
 
+	    getInitialState: function getInitialState() {
+	        return { pages: [] };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        $.ajax({
+	            url: this.props.url,
+	            dataType: 'json',
+	            cache: false,
+	            success: function (data) {
+	                this.setState({ pages: data });
+	            }.bind(this),
+	            error: function (xhr, status, err) {
+	                console.error(this.props.url, status, err.toString());
+	            }.bind(this)
+	        });
+	    },
 	    render: function render() {
-	        var PageLabelList = this.props.pages.map(function (page) {
+	        var PageLabelList = this.state.pages.map(function (page) {
 	            return _react2.default.createElement(
 	                'li',
 	                { className: 'page-label', key: page.id },
@@ -93,8 +98,24 @@
 	var PageContent = _react2.default.createClass({
 	    displayName: 'PageContent',
 
+	    getInitialState: function getInitialState() {
+	        return { page: {} };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        $.ajax({
+	            url: this.props.url,
+	            dataType: 'json',
+	            cache: false,
+	            success: function (data) {
+	                this.setState({ page: data });
+	            }.bind(this),
+	            error: function (xhr, status, err) {
+	                console.error(this.props.url, status, err.toString());
+	            }.bind(this)
+	        });
+	    },
 	    render: function render() {
-	        return _react2.default.createElement('div', { className: 'page-content', dangerouslySetInnerHTML: { __html: this.props.page.content } });
+	        return _react2.default.createElement('div', { className: 'page-content', dangerouslySetInnerHTML: { __html: this.state.page.content } });
 	    }
 	});
 
@@ -105,8 +126,24 @@
 	var PageTitles = _react2.default.createClass({
 	    displayName: 'PageTitles',
 
+	    getInitialState: function getInitialState() {
+	        return { page: {} };
+	    },
+	    componentDidMount: function componentDidMount() {
+	        $.ajax({
+	            url: this.props.url,
+	            dataType: 'json',
+	            cache: false,
+	            success: function (data) {
+	                this.setState({ page: data });
+	            }.bind(this),
+	            error: function (xhr, status, err) {
+	                console.error(this.props.url, status, err.toString());
+	            }.bind(this)
+	        });
+	    },
 	    render: function render() {
-	        var matches = getTitles(this.props.page.content);
+	        var matches = getTitles(this.state.page.content);
 	        var i = 0;
 	        var PageTitleList2 = matches.map(function (match) {
 	            i += 1;
@@ -175,6 +212,7 @@
 	            categories: this.state.categories,
 	            selectedCategory: id
 	        });
+	        this.props.onUpdateCategory(id);
 	    },
 	    render: function render() {
 	        var _this = this;
@@ -194,13 +232,7 @@
 	var CategoryLink = _react2.default.createClass({
 	    displayName: 'CategoryLink',
 
-	    getInitialState: function getInitialState() {
-	        return {
-	            selected: ''
-	        };
-	    },
 	    setCategory: function setCategory(id) {
-	        this.setState({ selected: id });
 	        this.props.onChangeCategory(id);
 	    },
 	    isActive: function isActive(value) {
@@ -222,28 +254,40 @@
 	var ApiDoc = _react2.default.createClass({
 	    displayName: 'ApiDoc',
 
+	    getInitialState: function getInitialState() {
+	        return {
+	            selectedCategory: '',
+	            selectedPage: ''
+	        };
+	    },
+	    updateCategory: function updateCategory(id) {
+	        this.setState({
+	            selectedCategory: id,
+	            selectedPage: ''
+	        });
+	    },
 	    render: function render() {
 	        return _react2.default.createElement(
 	            'div',
 	            { className: 'main-page' },
-	            _react2.default.createElement(CategoryMenu, { url: '/categories' }),
+	            _react2.default.createElement(CategoryMenu, { url: '/categories', onUpdateCategory: this.updateCategory }),
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'main-content' },
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'left-panel' },
-	                    _react2.default.createElement(PageList, { pages: this.props.data.pages })
+	                    _react2.default.createElement(PageList, { url: '/pages', selectedCategory: this.state.selectedCategory })
 	                ),
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'main-panel' },
-	                    _react2.default.createElement(PageContent, { page: this.props.data.page })
+	                    _react2.default.createElement(PageContent, { url: '/page/2', selectedPage: this.state.selectedPage })
 	                ),
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'right-panel' },
-	                    _react2.default.createElement(PageTitles, { page: this.props.data.page })
+	                    _react2.default.createElement(PageTitles, { url: '/page/2', selectedPage: this.state.selectedPage })
 	                ),
 	                _react2.default.createElement('div', { className: 'footer' })
 	            )
@@ -251,7 +295,7 @@
 	    }
 	});
 
-	_reactDom2.default.render(_react2.default.createElement(ApiDoc, data = { data: data }), document.getElementById('root'));
+	_reactDom2.default.render(_react2.default.createElement(ApiDoc), document.getElementById('root'));
 
 /***/ },
 /* 1 */

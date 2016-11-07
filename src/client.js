@@ -2,28 +2,25 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 var $ = require("jquery");
 
-var pages = [
-{id: 1, category_id:1, content: "<h1>WCM API doc</h1><h2>Getting started</h2><p>How do you start ?<br>please follow this step...</p>", parent_id: null, label: "WCM API doc"},
-{id: 2, category_id:1, content: "<h1>WCM structure</h1><h2>Authentication Structure</h2><p>structure description...</p><h2>WCM product Structure</h2><p>structure description...</p>", parent_id: 1, label: "WCM Structure"},
-{id: 3, category_id:1, content: "<h1>WCM routes</h1><h2>Account routes</h2><p>routes description</p>", parent_id: 1, label: "WCM API routes"},
-{id: 4, category_id:2, content: "<h1>WAM API doc</h1><h2>Getting started</h2><p>How do you start ?<br>please follow this step...</p>", parent_id: null, label: "WAM API doc"},
-];
-var page = {id: 1, category_id:1, content: "<h1>WCM API doc</h1><h2>Getting started</h2><p>How do you start ?<br>please follow this step...</p>", parent_id: null, label: "WCM API doc"};
-
-var categories = [
-{id: 1, label:"WCM"},
-{id: 2, label:"WAM"}
-]
-
-var data = {
-    page: page,
-    pages: pages,
-    categories: categories
-};
-
 var PageList = React.createClass({
+    getInitialState: function() {
+        return {pages: []};
+    },
+    componentDidMount: function() {
+        $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({pages: data});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+    },
     render: function() {
-        var PageLabelList = this.props.pages.map( function(page) {
+        var PageLabelList = this.state.pages.map( function(page) {
             return (
                 <li className="page-label" key={page.id}>{page.label}</li>
                 );
@@ -39,9 +36,25 @@ var PageList = React.createClass({
 // Page content management
 
 var PageContent = React.createClass({
+    getInitialState: function() {
+        return {page: {}};
+    },
+    componentDidMount: function() {
+        $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({page: data});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+    },
     render: function() {
         return (
-            <div className="page-content" dangerouslySetInnerHTML={{__html: this.props.page.content}}>
+            <div className="page-content" dangerouslySetInnerHTML={{__html: this.state.page.content}}>
             </div>
             );
     }
@@ -52,8 +65,24 @@ var PageContent = React.createClass({
 // Page title management
 
 var PageTitles = React.createClass({
+    getInitialState: function() {
+        return {page: {}};
+    },
+    componentDidMount: function() {
+        $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({page: data});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+    },
     render: function() {
-        var matches = getTitles(this.props.page.content);
+        var matches = getTitles(this.state.page.content);
         var i = 0;
         var PageTitleList2 = matches.map( function(match){
             i+=1;
@@ -118,6 +147,7 @@ var CategoryMenu = React.createClass({
             categories: this.state.categories,
             selectedCategory: id
         });
+        this.props.onUpdateCategory(id);
     },
     render: function() {
         var Menu = [];
@@ -135,13 +165,7 @@ var CategoryMenu = React.createClass({
 });
 
 var CategoryLink = React.createClass({
-    getInitialState: function(){
-        return {
-            selected:''
-        }
-    },
     setCategory: function(id) {
-        this.setState({selected: id});
         this.props.onChangeCategory(id);
     },
     isActive: function(value) {
@@ -161,19 +185,31 @@ var CategoryLink = React.createClass({
 // Display all the page
 
 var ApiDoc = React.createClass({
+    getInitialState: function(){
+        return {
+            selectedCategory:'',
+            selectedPage:''
+        }
+    },
+    updateCategory: function(id) {
+        this.setState({
+            selectedCategory: id,
+            selectedPage:''
+        });
+    },
     render: function() {
         return ( 
             <div className="main-page">
-                <CategoryMenu url="/categories" />
+                <CategoryMenu url="/categories" onUpdateCategory={this.updateCategory} />
                 <div className="main-content">
                     <div className="left-panel">
-                        <PageList pages={this.props.data.pages} />
+                        <PageList url="/pages" selectedCategory={this.state.selectedCategory} />
                     </div>
                     <div className="main-panel">
-                        <PageContent page={this.props.data.page} />
+                        <PageContent url="/page/2" selectedPage={this.state.selectedPage} />
                     </div>
                     <div className="right-panel">
-                        <PageTitles page={this.props.data.page} />
+                        <PageTitles url="/page/2" selectedPage={this.state.selectedPage} />
                     </div>
                     <div className="footer">
                     </div>
@@ -183,14 +219,8 @@ var ApiDoc = React.createClass({
     }
 });
 
-
-
-
-
-
-
 ReactDOM.render(
-  React.createElement(ApiDoc, data={data}),
+  React.createElement(ApiDoc),
   document.getElementById('root')
 );
 
