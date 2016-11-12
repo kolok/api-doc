@@ -27,6 +27,27 @@ class PageList extends React.Component {
             }.bind(this)
         });
     }
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps != this.props)
+        {
+            var url = "/pages";
+            if (this.props.selectedCategory)
+            {
+                url = "/category/" + this.props.selectedCategory+"/pages";
+            }
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                cache: false,
+                success: function(data) {
+                    this.setState({pages: data});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        }
+    }
     render() {
         var PageLabelList = this.state.pages.map( function(page) {
             return (

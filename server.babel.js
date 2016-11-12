@@ -2,6 +2,16 @@ import express from 'express';
 
 const app = express();
 
+var mysql      = require('mysql');
+var connection = mysql.createConnection({
+    socketPath : '/tmp/webo-mysql-base.sock',
+    user       : 'root',
+    password   : '',
+    database   : 'api_doc'
+});
+
+connection.connect();
+
 app.use('/', express.static('public'));
 
 var path    = require("path");
@@ -28,44 +38,52 @@ var data = {
 
 app.get('/pages', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(data.pages);
+    connection.query('SELECT * from pages', function(err, rows, fields) {
+        if (err) throw err;
+        res.status(200).send(rows);
+    });
 });
 
 app.get('/category/:category_id/pages', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
-    var pages = [];
-    for(var i = 0; i < data.pages.length; i++) { 
-        if (data.pages[i].category_id == req.params.category_id) {
-            pages.push(data.pages[i]);
-        }
-    }
-
-    res.status(200).send(pages);
+    connection.query('SELECT * from pages where category_id = ' + req.params.category_id, function(err, rows, fields) {
+        if (err) throw err;
+        res.status(200).send(rows);
+    });
 });
 
 app.get('/page/:id', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
-    if (data.pages[req.params.id -1] === undefined) {
-        res.status(404).send({error:"page not found"});
-    }
-    else {
-        res.status(200).send(data.pages[req.params.id -1]);
-    }
+    connection.query('SELECT * from pages where id = ' + req.params.id, function(err, rows, fields) {
+        if (err) throw err;
+        if (rows[0] === undefined){
+            res.status(404).send({error:"page not found"});
+        }
+        else {
+            res.status(200).send(rows[0]);
+        }
+    });
 });
 
 app.get('/categories', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
-    res.status(200).send(data.categories);
+    connection.query('SELECT * from categories', function(err, rows, fields) {
+        if (err) throw err;
+        res.status(200).send(rows);
+    });
 });
 
 app.get('/category/:id', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
-    if (data.categories[req.params.id -1] === undefined) {
-        res.status(404).send({error:"page not found"});
-    }
-    else {
-        res.status(200).send(data.categories[req.params.id -1]);
-    }
+    connection.query('SELECT * from categories where id = ' + req.params.id, function(err, rows, fields) {
+        if (err) throw err;
+        if (rows[0] === undefined){
+            res.status(404).send({error:"page not found"});
+        }
+        else {
+            res.status(200).send(rows[0]);
+        }
+    });
 });
 
 
