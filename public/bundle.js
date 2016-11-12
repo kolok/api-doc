@@ -116,7 +116,8 @@
 	    }, {
 	        key: 'componentDidUpdate',
 	        value: function componentDidUpdate(prevProps, prevState) {
-	            if (prevProps != this.props) {
+	            if (prevProps.selectedCategory != this.props.selectedCategory) {
+	                console.log('update');
 	                var url = "/pages";
 	                if (this.props.selectedCategory) {
 	                    url = "/category/" + this.props.selectedCategory + "/pages";
@@ -135,13 +136,23 @@
 	            }
 	        }
 	    }, {
+	        key: 'changePage',
+	        value: function changePage(id) {
+	            this.setState(function (prevState, props) {
+	                return {
+	                    pages: prevState.pages,
+	                    selectedPage: id
+	                };
+	            });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _this2 = this;
 
 	            var PageLabelList = [];
 	            this.state.pages.forEach(function (page) {
-	                PageLabelList.push(_react2.default.createElement(PageLink, { selectedPage: _this2.state.selectedPage, page: page, key: page.id }));
+	                PageLabelList.push(_react2.default.createElement(PageLink, { selectedPage: _this2.state.selectedPage, onChangePage: _this2.changePage.bind(_this2), page: page, key: page.id }));
 	            });
 	            return _react2.default.createElement(
 	                'ul',
@@ -164,6 +175,11 @@
 	    }
 
 	    (0, _createClass3.default)(PageLink, [{
+	        key: 'setPage',
+	        value: function setPage(id) {
+	            this.props.onChangePage(id);
+	        }
+	    }, {
 	        key: 'isActive',
 	        value: function isActive(id) {
 	            return "page-label " + (id == this.props.selectedPage ? 'active' : 'default');
@@ -173,7 +189,7 @@
 	        value: function render() {
 	            return _react2.default.createElement(
 	                'li',
-	                { className: this.isActive(this.props.page.id) },
+	                { className: this.isActive(this.props.page.id), onClick: this.setPage.bind(this, this.props.page.id) },
 	                this.props.page.label
 	            );
 	        }

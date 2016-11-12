@@ -28,8 +28,9 @@ class PageList extends React.Component {
         });
     }
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps != this.props)
+        if (prevProps.selectedCategory != this.props.selectedCategory)
         {
+            console.log('update');
             var url = "/pages";
             if (this.props.selectedCategory)
             {
@@ -48,12 +49,19 @@ class PageList extends React.Component {
             });
         }
     }
+    changePage(id) {
+        this.setState((prevState, props) => ({
+            pages: prevState.pages,
+            selectedPage: id
+        }));
+
+    }
     render() {
 
         var PageLabelList = [];
         this.state.pages.forEach( (page) => {
             PageLabelList.push(
-                <PageLink selectedPage={this.state.selectedPage} page={page} key={page.id}/>
+                <PageLink selectedPage={this.state.selectedPage} onChangePage={this.changePage.bind(this)} page={page} key={page.id}/>
                 );
         });
         return (
@@ -65,12 +73,15 @@ class PageList extends React.Component {
 };
 
 class PageLink extends React.Component {
+    setPage(id) {
+        this.props.onChangePage(id);
+    }
     isActive(id) {
         return "page-label " + ( ( id == this.props.selectedPage ) ? 'active' : 'default');
     }
     render() {
         return (
-            <li className={this.isActive(this.props.page.id)}>
+            <li className={this.isActive(this.props.page.id)} onClick={this.setPage.bind(this, this.props.page.id)}>
                 {this.props.page.label}
             </li>
             );
