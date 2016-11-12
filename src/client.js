@@ -7,7 +7,7 @@ import CategoryMenu from "./category-menu"
 class PageList extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {pages: []};
+        this.state = {pages: [], selectedPage: ''};
     }
     componentDidMount() {
         var url = "/pages";
@@ -20,7 +20,7 @@ class PageList extends React.Component {
             dataType: 'json',
             cache: false,
             success: function(data) {
-                this.setState({pages: data});
+                this.setState({pages: data, selectedPage: (data[0] ? data[0].id : '')});
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(this.props.url, status, err.toString());
@@ -40,7 +40,7 @@ class PageList extends React.Component {
                 dataType: 'json',
                 cache: false,
                 success: function(data) {
-                    this.setState({pages: data});
+                    this.setState({pages: data, selectedPage: (data[0] ? data[0].id : '')});
                 }.bind(this),
                 error: function(xhr, status, err) {
                     console.error(this.props.url, status, err.toString());
@@ -49,9 +49,11 @@ class PageList extends React.Component {
         }
     }
     render() {
-        var PageLabelList = this.state.pages.map( function(page) {
-            return (
-                <li className="page-label" key={page.id}>{page.label}</li>
+
+        var PageLabelList = [];
+        this.state.pages.forEach( (page) => {
+            PageLabelList.push(
+                <PageLink selectedPage={this.state.selectedPage} page={page} key={page.id}/>
                 );
         });
         return (
@@ -61,6 +63,20 @@ class PageList extends React.Component {
             );
     }
 };
+
+class PageLink extends React.Component {
+    isActive(id) {
+        return "page-label " + ( ( id == this.props.selectedPage ) ? 'active' : 'default');
+    }
+    render() {
+        return (
+            <li className={this.isActive(this.props.page.id)}>
+                {this.props.page.label}
+            </li>
+            );
+    }
+};
+
 
 // Page content management
 

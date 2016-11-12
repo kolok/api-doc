@@ -90,7 +90,7 @@
 
 	        var _this = (0, _possibleConstructorReturn3.default)(this, (PageList.__proto__ || (0, _getPrototypeOf2.default)(PageList)).call(this, props));
 
-	        _this.state = { pages: [] };
+	        _this.state = { pages: [], selectedPage: '' };
 	        return _this;
 	    }
 
@@ -106,7 +106,7 @@
 	                dataType: 'json',
 	                cache: false,
 	                success: function (data) {
-	                    this.setState({ pages: data });
+	                    this.setState({ pages: data, selectedPage: data[0] ? data[0].id : '' });
 	                }.bind(this),
 	                error: function (xhr, status, err) {
 	                    console.error(this.props.url, status, err.toString());
@@ -126,7 +126,7 @@
 	                    dataType: 'json',
 	                    cache: false,
 	                    success: function (data) {
-	                        this.setState({ pages: data });
+	                        this.setState({ pages: data, selectedPage: data[0] ? data[0].id : '' });
 	                    }.bind(this),
 	                    error: function (xhr, status, err) {
 	                        console.error(this.props.url, status, err.toString());
@@ -137,12 +137,11 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var PageLabelList = this.state.pages.map(function (page) {
-	                return _react2.default.createElement(
-	                    'li',
-	                    { className: 'page-label', key: page.id },
-	                    page.label
-	                );
+	            var _this2 = this;
+
+	            var PageLabelList = [];
+	            this.state.pages.forEach(function (page) {
+	                PageLabelList.push(_react2.default.createElement(PageLink, { selectedPage: _this2.state.selectedPage, page: page, key: page.id }));
 	            });
 	            return _react2.default.createElement(
 	                'ul',
@@ -156,18 +155,46 @@
 
 	;
 
+	var PageLink = function (_React$Component2) {
+	    (0, _inherits3.default)(PageLink, _React$Component2);
+
+	    function PageLink() {
+	        (0, _classCallCheck3.default)(this, PageLink);
+	        return (0, _possibleConstructorReturn3.default)(this, (PageLink.__proto__ || (0, _getPrototypeOf2.default)(PageLink)).apply(this, arguments));
+	    }
+
+	    (0, _createClass3.default)(PageLink, [{
+	        key: 'isActive',
+	        value: function isActive(id) {
+	            return "page-label " + (id == this.props.selectedPage ? 'active' : 'default');
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'li',
+	                { className: this.isActive(this.props.page.id) },
+	                this.props.page.label
+	            );
+	        }
+	    }]);
+	    return PageLink;
+	}(_react2.default.Component);
+
+	;
+
 	// Page content management
 
-	var PageContent = function (_React$Component2) {
-	    (0, _inherits3.default)(PageContent, _React$Component2);
+	var PageContent = function (_React$Component3) {
+	    (0, _inherits3.default)(PageContent, _React$Component3);
 
 	    function PageContent(props) {
 	        (0, _classCallCheck3.default)(this, PageContent);
 
-	        var _this2 = (0, _possibleConstructorReturn3.default)(this, (PageContent.__proto__ || (0, _getPrototypeOf2.default)(PageContent)).call(this, props));
+	        var _this4 = (0, _possibleConstructorReturn3.default)(this, (PageContent.__proto__ || (0, _getPrototypeOf2.default)(PageContent)).call(this, props));
 
-	        _this2.state = { page: [] };
-	        return _this2;
+	        _this4.state = { page: [] };
+	        return _this4;
 	    }
 
 	    (0, _createClass3.default)(PageContent, [{
@@ -200,16 +227,16 @@
 
 	// Page title management
 
-	var PageTitles = function (_React$Component3) {
-	    (0, _inherits3.default)(PageTitles, _React$Component3);
+	var PageTitles = function (_React$Component4) {
+	    (0, _inherits3.default)(PageTitles, _React$Component4);
 
 	    function PageTitles(props) {
 	        (0, _classCallCheck3.default)(this, PageTitles);
 
-	        var _this3 = (0, _possibleConstructorReturn3.default)(this, (PageTitles.__proto__ || (0, _getPrototypeOf2.default)(PageTitles)).call(this, props));
+	        var _this5 = (0, _possibleConstructorReturn3.default)(this, (PageTitles.__proto__ || (0, _getPrototypeOf2.default)(PageTitles)).call(this, props));
 
-	        _this3.state = { page: [] };
-	        return _this3;
+	        _this5.state = { page: [] };
+	        return _this5;
 	    }
 
 	    (0, _createClass3.default)(PageTitles, [{
@@ -251,8 +278,8 @@
 
 	;
 
-	var PageTitle = function (_React$Component4) {
-	    (0, _inherits3.default)(PageTitle, _React$Component4);
+	var PageTitle = function (_React$Component5) {
+	    (0, _inherits3.default)(PageTitle, _React$Component5);
 
 	    function PageTitle() {
 	        (0, _classCallCheck3.default)(this, PageTitle);
@@ -290,19 +317,19 @@
 
 	// Display all the page
 
-	var ApiDoc = function (_React$Component5) {
-	    (0, _inherits3.default)(ApiDoc, _React$Component5);
+	var ApiDoc = function (_React$Component6) {
+	    (0, _inherits3.default)(ApiDoc, _React$Component6);
 
 	    function ApiDoc(props) {
 	        (0, _classCallCheck3.default)(this, ApiDoc);
 
-	        var _this5 = (0, _possibleConstructorReturn3.default)(this, (ApiDoc.__proto__ || (0, _getPrototypeOf2.default)(ApiDoc)).call(this, props));
+	        var _this7 = (0, _possibleConstructorReturn3.default)(this, (ApiDoc.__proto__ || (0, _getPrototypeOf2.default)(ApiDoc)).call(this, props));
 
-	        _this5.state = {
+	        _this7.state = {
 	            selectedCategory: '',
 	            selectedPage: ''
 	        };
-	        return _this5;
+	        return _this7;
 	    }
 
 	    (0, _createClass3.default)(ApiDoc, [{
