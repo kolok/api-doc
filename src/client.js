@@ -98,27 +98,9 @@ class PageContent extends React.Component {
         super(props);
         this.state = {page: {}};
     }
-    componentDidUpdate(prevProps, prevState) {
-        console.log(this.props.selectedPage);
-        if (prevProps.selectedPage != this.props.selectedPage && this.props.selectedPage !== '')
-        {
-            var url = "/page/"+this.props.selectedPage;
-            $.ajax({
-                url: url,
-                dataType: 'json',
-                cache: false,
-                success: function(data) {
-                    this.setState({page: data});
-                }.bind(this),
-                error: function(xhr, status, err) {
-                    console.error(this.props.url, status, err.toString());
-                }.bind(this)
-            });
-        }
-    }
     render() {
         return (
-            <div className="page-content" dangerouslySetInnerHTML={{__html: this.state.page.content}}>
+            <div className="page-content" dangerouslySetInnerHTML={{__html: this.props.page.content}}>
             </div>
             );
     }
@@ -133,26 +115,8 @@ class PageTitles extends React.Component {
         super(props);
         this.state = {page: []};
     }
-    componentDidUpdate(prevProps, prevState) {
-        console.log(this.props.selectedPage);
-        if (prevProps.selectedPage != this.props.selectedPage && this.props.selectedPage !== '')
-        {
-            var url = "/page/"+this.props.selectedPage;
-            $.ajax({
-                url: url,
-                dataType: 'json',
-                cache: false,
-                success: function(data) {
-                    this.setState({page: data});
-                }.bind(this),
-                error: function(xhr, status, err) {
-                    console.error(this.props.url, status, err.toString());
-                }.bind(this)
-            });
-        }
-    }
     render() {
-        var matches = getTitles(this.state.page.content);
+        var matches = getTitles(this.props.page.content);
         var i = 0;
         var PageTitleList2 = matches.map( function(match){
             i+=1;
@@ -180,9 +144,10 @@ class PageTitle extends React.Component {
 };
 
 function getTitles(content) {
-    var myRegexp = /\<(h\d)\>([\w\s]*)\<\/h\d\>/;
+    var myRegexp = /\<(h\d)\>([\w\s\(\)\?]*)\<\/h\d\>/;
     var matches = [];
     var match = myRegexp.exec(content);
+    console.log(content);
     while (match = myRegexp.exec(content)) {
         matches.push([match[1], match[2]]);
         content = content.replace(myRegexp, "");
@@ -200,20 +165,36 @@ class ApiDoc extends React.Component {
         super(props);
         this.state = {
             selectedCategory:'',
-            selectedPage:''
+            selectedPage:'',
+            page: ''
         };
     }
     updateCategory(id) {
         this.setState({
             selectedCategory: id,
-            selectedPage:''
+            selectedPage:'',
+            page:''
         });
     }
     updatePage(id) {
-        this.setState((prevState, props) => ({
-            selectedCategory: prevState.selectedCategory,
-            selectedPage: id
-        }));
+
+            var url = "/page/" + id;
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                cache: false,
+                success: function(data) {
+                    this.setState((prevState, props) => ({
+                        selectedCategory: prevState.selectedCategory,
+                        selectedPage: id,
+                        page: data
+                    }));
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+
     }
     render() {
         return ( 
@@ -224,10 +205,10 @@ class ApiDoc extends React.Component {
                         <PageList url="category/1/pages" selectedPage={this.state.selectedPage} selectedCategory={this.state.selectedCategory} onUpdatePage={this.updatePage.bind(this)} />
                     </div>
                     <div className="main-panel">
-                        <PageContent selectedPage={this.state.selectedPage} />
+                        <PageContent selectedPage={this.state.selectedPage} page={this.state.page} />
                     </div>
                     <div className="right-panel">
-                        <PageTitles url="/page/1" selectedPage={this.state.selectedPage} />
+                        <PageTitles url="/page/1" selectedPage={this.state.selectedPage} page={this.state.page}/>
                     </div>
                     <div className="footer">
                     </div>

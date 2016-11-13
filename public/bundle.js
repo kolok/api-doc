@@ -216,28 +216,9 @@
 	    }
 
 	    (0, _createClass3.default)(PageContent, [{
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate(prevProps, prevState) {
-	            console.log(this.props.selectedPage);
-	            if (prevProps.selectedPage != this.props.selectedPage && this.props.selectedPage !== '') {
-	                var url = "/page/" + this.props.selectedPage;
-	                $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: false,
-	                    success: function (data) {
-	                        this.setState({ page: data });
-	                    }.bind(this),
-	                    error: function (xhr, status, err) {
-	                        console.error(this.props.url, status, err.toString());
-	                    }.bind(this)
-	                });
-	            }
-	        }
-	    }, {
 	        key: 'render',
 	        value: function render() {
-	            return _react2.default.createElement('div', { className: 'page-content', dangerouslySetInnerHTML: { __html: this.state.page.content } });
+	            return _react2.default.createElement('div', { className: 'page-content', dangerouslySetInnerHTML: { __html: this.props.page.content } });
 	        }
 	    }]);
 	    return PageContent;
@@ -262,28 +243,9 @@
 	    }
 
 	    (0, _createClass3.default)(PageTitles, [{
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate(prevProps, prevState) {
-	            console.log(this.props.selectedPage);
-	            if (prevProps.selectedPage != this.props.selectedPage && this.props.selectedPage !== '') {
-	                var url = "/page/" + this.props.selectedPage;
-	                $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: false,
-	                    success: function (data) {
-	                        this.setState({ page: data });
-	                    }.bind(this),
-	                    error: function (xhr, status, err) {
-	                        console.error(this.props.url, status, err.toString());
-	                    }.bind(this)
-	                });
-	            }
-	        }
-	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var matches = getTitles(this.state.page.content);
+	            var matches = getTitles(this.props.page.content);
 	            var i = 0;
 	            var PageTitleList2 = matches.map(function (match) {
 	                i += 1;
@@ -328,9 +290,10 @@
 	;
 
 	function getTitles(content) {
-	    var myRegexp = /\<(h\d)\>([\w\s]*)\<\/h\d\>/;
+	    var myRegexp = /\<(h\d)\>([\w\s\(\)\?]*)\<\/h\d\>/;
 	    var matches = [];
 	    var match = myRegexp.exec(content);
+	    console.log(content);
 	    while (match = myRegexp.exec(content)) {
 	        matches.push([match[1], match[2]]);
 	        content = content.replace(myRegexp, "");
@@ -353,7 +316,8 @@
 
 	        _this7.state = {
 	            selectedCategory: '',
-	            selectedPage: ''
+	            selectedPage: '',
+	            page: ''
 	        };
 	        return _this7;
 	    }
@@ -363,17 +327,31 @@
 	        value: function updateCategory(id) {
 	            this.setState({
 	                selectedCategory: id,
-	                selectedPage: ''
+	                selectedPage: '',
+	                page: ''
 	            });
 	        }
 	    }, {
 	        key: 'updatePage',
 	        value: function updatePage(id) {
-	            this.setState(function (prevState, props) {
-	                return {
-	                    selectedCategory: prevState.selectedCategory,
-	                    selectedPage: id
-	                };
+
+	            var url = "/page/" + id;
+	            $.ajax({
+	                url: url,
+	                dataType: 'json',
+	                cache: false,
+	                success: function (data) {
+	                    this.setState(function (prevState, props) {
+	                        return {
+	                            selectedCategory: prevState.selectedCategory,
+	                            selectedPage: id,
+	                            page: data
+	                        };
+	                    });
+	                }.bind(this),
+	                error: function (xhr, status, err) {
+	                    console.error(this.props.url, status, err.toString());
+	                }.bind(this)
 	            });
 	        }
 	    }, {
@@ -394,12 +372,12 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'main-panel' },
-	                        _react2.default.createElement(PageContent, { selectedPage: this.state.selectedPage })
+	                        _react2.default.createElement(PageContent, { selectedPage: this.state.selectedPage, page: this.state.page })
 	                    ),
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'right-panel' },
-	                        _react2.default.createElement(PageTitles, { url: '/page/1', selectedPage: this.state.selectedPage })
+	                        _react2.default.createElement(PageTitles, { url: '/page/1', selectedPage: this.state.selectedPage, page: this.state.page })
 	                    ),
 	                    _react2.default.createElement('div', { className: 'footer' })
 	                )
