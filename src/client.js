@@ -21,6 +21,7 @@ class PageList extends React.Component {
             cache: false,
             success: function(data) {
                 this.setState({pages: data, selectedPage: (data[0] ? data[0].id : '')});
+                this.props.onUpdatePage((data[0] ? data[0].id : ''));
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(this.props.url, status, err.toString());
@@ -30,7 +31,6 @@ class PageList extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.selectedCategory != this.props.selectedCategory)
         {
-            console.log('update');
             var url = "/pages";
             if (this.props.selectedCategory)
             {
@@ -42,6 +42,7 @@ class PageList extends React.Component {
                 cache: false,
                 success: function(data) {
                     this.setState({pages: data, selectedPage: (data[0] ? data[0].id : '')});
+                    this.props.onUpdatePage((data[0] ? data[0].id : ''));
                 }.bind(this),
                 error: function(xhr, status, err) {
                     console.error(this.props.url, status, err.toString());
@@ -54,6 +55,7 @@ class PageList extends React.Component {
             pages: prevState.pages,
             selectedPage: id
         }));
+        this.props.onUpdatePage(id);
 
     }
     render() {
@@ -61,7 +63,7 @@ class PageList extends React.Component {
         var PageLabelList = [];
         this.state.pages.forEach( (page) => {
             PageLabelList.push(
-                <PageLink selectedPage={this.state.selectedPage} onChangePage={this.changePage.bind(this)} page={page} key={page.id}/>
+                <PageLink selectedPage={this.props.selectedPage} onChangePage={this.changePage.bind(this)} page={page} key={page.id}/>
                 );
         });
         return (
@@ -94,20 +96,25 @@ class PageLink extends React.Component {
 class PageContent extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {page: []};
+        this.state = {page: {}};
     }
-    componentDidMount() {
-        $.ajax({
-            url: this.props.url,
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
-                this.setState({page: data});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
+    componentDidUpdate(prevProps, prevState) {
+        console.log(this.props.selectedPage);
+        if (prevProps.selectedPage != this.props.selectedPage && this.props.selectedPage !== '')
+        {
+            var url = "/page/"+this.props.selectedPage;
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                cache: false,
+                success: function(data) {
+                    this.setState({page: data});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        }
     }
     render() {
         return (
@@ -126,18 +133,23 @@ class PageTitles extends React.Component {
         super(props);
         this.state = {page: []};
     }
-    componentDidMount() {
-        $.ajax({
-            url: this.props.url,
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
-                this.setState({page: data});
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
+    componentDidUpdate(prevProps, prevState) {
+        console.log(this.props.selectedPage);
+        if (prevProps.selectedPage != this.props.selectedPage && this.props.selectedPage !== '')
+        {
+            var url = "/page/"+this.props.selectedPage;
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                cache: false,
+                success: function(data) {
+                    this.setState({page: data});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(this.props.url, status, err.toString());
+                }.bind(this)
+            });
+        }
     }
     render() {
         var matches = getTitles(this.state.page.content);
@@ -197,19 +209,25 @@ class ApiDoc extends React.Component {
             selectedPage:''
         });
     }
+    updatePage(id) {
+        this.setState((prevState, props) => ({
+            selectedCategory: prevState.selectedCategory,
+            selectedPage: id
+        }));
+    }
     render() {
         return ( 
             <div className="main-page">
                 <CategoryMenu url="/categories" onUpdateCategory={this.updateCategory.bind(this)} />
                 <div className="main-content">
                     <div className="left-panel">
-                        <PageList url="category/1/pages" selectedCategory={this.state.selectedCategory} />
+                        <PageList url="category/1/pages" selectedPage={this.state.selectedPage} selectedCategory={this.state.selectedCategory} onUpdatePage={this.updatePage.bind(this)} />
                     </div>
                     <div className="main-panel">
-                        <PageContent url="/page/2" selectedPage={this.state.selectedPage} />
+                        <PageContent selectedPage={this.state.selectedPage} />
                     </div>
                     <div className="right-panel">
-                        <PageTitles url="/page/2" selectedPage={this.state.selectedPage} />
+                        <PageTitles url="/page/1" selectedPage={this.state.selectedPage} />
                     </div>
                     <div className="footer">
                     </div>

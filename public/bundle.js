@@ -107,6 +107,7 @@
 	                cache: false,
 	                success: function (data) {
 	                    this.setState({ pages: data, selectedPage: data[0] ? data[0].id : '' });
+	                    this.props.onUpdatePage(data[0] ? data[0].id : '');
 	                }.bind(this),
 	                error: function (xhr, status, err) {
 	                    console.error(this.props.url, status, err.toString());
@@ -117,7 +118,6 @@
 	        key: 'componentDidUpdate',
 	        value: function componentDidUpdate(prevProps, prevState) {
 	            if (prevProps.selectedCategory != this.props.selectedCategory) {
-	                console.log('update');
 	                var url = "/pages";
 	                if (this.props.selectedCategory) {
 	                    url = "/category/" + this.props.selectedCategory + "/pages";
@@ -128,6 +128,7 @@
 	                    cache: false,
 	                    success: function (data) {
 	                        this.setState({ pages: data, selectedPage: data[0] ? data[0].id : '' });
+	                        this.props.onUpdatePage(data[0] ? data[0].id : '');
 	                    }.bind(this),
 	                    error: function (xhr, status, err) {
 	                        console.error(this.props.url, status, err.toString());
@@ -144,6 +145,7 @@
 	                    selectedPage: id
 	                };
 	            });
+	            this.props.onUpdatePage(id);
 	        }
 	    }, {
 	        key: 'render',
@@ -152,7 +154,7 @@
 
 	            var PageLabelList = [];
 	            this.state.pages.forEach(function (page) {
-	                PageLabelList.push(_react2.default.createElement(PageLink, { selectedPage: _this2.state.selectedPage, onChangePage: _this2.changePage.bind(_this2), page: page, key: page.id }));
+	                PageLabelList.push(_react2.default.createElement(PageLink, { selectedPage: _this2.props.selectedPage, onChangePage: _this2.changePage.bind(_this2), page: page, key: page.id }));
 	            });
 	            return _react2.default.createElement(
 	                'ul',
@@ -209,24 +211,28 @@
 
 	        var _this4 = (0, _possibleConstructorReturn3.default)(this, (PageContent.__proto__ || (0, _getPrototypeOf2.default)(PageContent)).call(this, props));
 
-	        _this4.state = { page: [] };
+	        _this4.state = { page: {} };
 	        return _this4;
 	    }
 
 	    (0, _createClass3.default)(PageContent, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            $.ajax({
-	                url: this.props.url,
-	                dataType: 'json',
-	                cache: false,
-	                success: function (data) {
-	                    this.setState({ page: data });
-	                }.bind(this),
-	                error: function (xhr, status, err) {
-	                    console.error(this.props.url, status, err.toString());
-	                }.bind(this)
-	            });
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {
+	            console.log(this.props.selectedPage);
+	            if (prevProps.selectedPage != this.props.selectedPage && this.props.selectedPage !== '') {
+	                var url = "/page/" + this.props.selectedPage;
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: false,
+	                    success: function (data) {
+	                        this.setState({ page: data });
+	                    }.bind(this),
+	                    error: function (xhr, status, err) {
+	                        console.error(this.props.url, status, err.toString());
+	                    }.bind(this)
+	                });
+	            }
 	        }
 	    }, {
 	        key: 'render',
@@ -256,19 +262,23 @@
 	    }
 
 	    (0, _createClass3.default)(PageTitles, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            $.ajax({
-	                url: this.props.url,
-	                dataType: 'json',
-	                cache: false,
-	                success: function (data) {
-	                    this.setState({ page: data });
-	                }.bind(this),
-	                error: function (xhr, status, err) {
-	                    console.error(this.props.url, status, err.toString());
-	                }.bind(this)
-	            });
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {
+	            console.log(this.props.selectedPage);
+	            if (prevProps.selectedPage != this.props.selectedPage && this.props.selectedPage !== '') {
+	                var url = "/page/" + this.props.selectedPage;
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: false,
+	                    success: function (data) {
+	                        this.setState({ page: data });
+	                    }.bind(this),
+	                    error: function (xhr, status, err) {
+	                        console.error(this.props.url, status, err.toString());
+	                    }.bind(this)
+	                });
+	            }
 	        }
 	    }, {
 	        key: 'render',
@@ -357,6 +367,16 @@
 	            });
 	        }
 	    }, {
+	        key: 'updatePage',
+	        value: function updatePage(id) {
+	            this.setState(function (prevState, props) {
+	                return {
+	                    selectedCategory: prevState.selectedCategory,
+	                    selectedPage: id
+	                };
+	            });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement(
@@ -369,17 +389,17 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'left-panel' },
-	                        _react2.default.createElement(PageList, { url: 'category/1/pages', selectedCategory: this.state.selectedCategory })
+	                        _react2.default.createElement(PageList, { url: 'category/1/pages', selectedPage: this.state.selectedPage, selectedCategory: this.state.selectedCategory, onUpdatePage: this.updatePage.bind(this) })
 	                    ),
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'main-panel' },
-	                        _react2.default.createElement(PageContent, { url: '/page/2', selectedPage: this.state.selectedPage })
+	                        _react2.default.createElement(PageContent, { selectedPage: this.state.selectedPage })
 	                    ),
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'right-panel' },
-	                        _react2.default.createElement(PageTitles, { url: '/page/2', selectedPage: this.state.selectedPage })
+	                        _react2.default.createElement(PageTitles, { url: '/page/1', selectedPage: this.state.selectedPage })
 	                    ),
 	                    _react2.default.createElement('div', { className: 'footer' })
 	                )
