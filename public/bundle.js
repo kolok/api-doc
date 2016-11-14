@@ -78,248 +78,36 @@
 
 	var _categoryMenu2 = _interopRequireDefault(_categoryMenu);
 
+	var _pageList = __webpack_require__(260);
+
+	var _pageList2 = _interopRequireDefault(_pageList);
+
+	var _pageContent = __webpack_require__(261);
+
+	var _pageContent2 = _interopRequireDefault(_pageContent);
+
+	var _pageTitles = __webpack_require__(262);
+
+	var _pageTitles2 = _interopRequireDefault(_pageTitles);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var $ = __webpack_require__(259);
 
-	var PageList = function (_React$Component) {
-	    (0, _inherits3.default)(PageList, _React$Component);
-
-	    function PageList(props) {
-	        (0, _classCallCheck3.default)(this, PageList);
-
-	        var _this = (0, _possibleConstructorReturn3.default)(this, (PageList.__proto__ || (0, _getPrototypeOf2.default)(PageList)).call(this, props));
-
-	        _this.state = { pages: [], selectedPage: '' };
-	        return _this;
-	    }
-
-	    (0, _createClass3.default)(PageList, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            var url = "/pages";
-	            if (this.props.selectedCategory) {
-	                url = "/category/" + this.props.selectedCategory + "/pages";
-	            }
-	            $.ajax({
-	                url: url,
-	                dataType: 'json',
-	                cache: false,
-	                success: function (data) {
-	                    this.setState({ pages: data, selectedPage: data[0] ? data[0].id : '' });
-	                    this.props.onUpdatePage(data[0] ? data[0].id : '');
-	                }.bind(this),
-	                error: function (xhr, status, err) {
-	                    console.error(this.props.url, status, err.toString());
-	                }.bind(this)
-	            });
-	        }
-	    }, {
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate(prevProps, prevState) {
-	            if (prevProps.selectedCategory != this.props.selectedCategory) {
-	                var url = "/pages";
-	                if (this.props.selectedCategory) {
-	                    url = "/category/" + this.props.selectedCategory + "/pages";
-	                }
-	                $.ajax({
-	                    url: url,
-	                    dataType: 'json',
-	                    cache: false,
-	                    success: function (data) {
-	                        this.setState({ pages: data, selectedPage: data[0] ? data[0].id : '' });
-	                        this.props.onUpdatePage(data[0] ? data[0].id : '');
-	                    }.bind(this),
-	                    error: function (xhr, status, err) {
-	                        console.error(this.props.url, status, err.toString());
-	                    }.bind(this)
-	                });
-	            }
-	        }
-	    }, {
-	        key: 'changePage',
-	        value: function changePage(id) {
-	            this.setState(function (prevState, props) {
-	                return {
-	                    pages: prevState.pages,
-	                    selectedPage: id
-	                };
-	            });
-	            this.props.onUpdatePage(id);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var _this2 = this;
-
-	            var PageLabelList = [];
-	            this.state.pages.forEach(function (page) {
-	                PageLabelList.push(_react2.default.createElement(PageLink, { selectedPage: _this2.props.selectedPage, onChangePage: _this2.changePage.bind(_this2), page: page, key: page.id }));
-	            });
-	            return _react2.default.createElement(
-	                'ul',
-	                { className: 'page-label-list' },
-	                PageLabelList
-	            );
-	        }
-	    }]);
-	    return PageList;
-	}(_react2.default.Component);
-
-	;
-
-	var PageLink = function (_React$Component2) {
-	    (0, _inherits3.default)(PageLink, _React$Component2);
-
-	    function PageLink() {
-	        (0, _classCallCheck3.default)(this, PageLink);
-	        return (0, _possibleConstructorReturn3.default)(this, (PageLink.__proto__ || (0, _getPrototypeOf2.default)(PageLink)).apply(this, arguments));
-	    }
-
-	    (0, _createClass3.default)(PageLink, [{
-	        key: 'setPage',
-	        value: function setPage(id) {
-	            this.props.onChangePage(id);
-	        }
-	    }, {
-	        key: 'isActive',
-	        value: function isActive(id) {
-	            return "page-label " + (id == this.props.selectedPage ? 'active' : 'default');
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'li',
-	                { className: this.isActive(this.props.page.id), onClick: this.setPage.bind(this, this.props.page.id) },
-	                this.props.page.label
-	            );
-	        }
-	    }]);
-	    return PageLink;
-	}(_react2.default.Component);
-
-	;
-
-	// Page content management
-
-	var PageContent = function (_React$Component3) {
-	    (0, _inherits3.default)(PageContent, _React$Component3);
-
-	    function PageContent(props) {
-	        (0, _classCallCheck3.default)(this, PageContent);
-
-	        var _this4 = (0, _possibleConstructorReturn3.default)(this, (PageContent.__proto__ || (0, _getPrototypeOf2.default)(PageContent)).call(this, props));
-
-	        _this4.state = { page: {} };
-	        return _this4;
-	    }
-
-	    (0, _createClass3.default)(PageContent, [{
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement('div', { className: 'page-content', dangerouslySetInnerHTML: { __html: this.props.page.content } });
-	        }
-	    }]);
-	    return PageContent;
-	}(_react2.default.Component);
-
-	;
-
-	// End of page content management
-
-	// Page title management
-
-	var PageTitles = function (_React$Component4) {
-	    (0, _inherits3.default)(PageTitles, _React$Component4);
-
-	    function PageTitles(props) {
-	        (0, _classCallCheck3.default)(this, PageTitles);
-
-	        var _this5 = (0, _possibleConstructorReturn3.default)(this, (PageTitles.__proto__ || (0, _getPrototypeOf2.default)(PageTitles)).call(this, props));
-
-	        _this5.state = { page: [] };
-	        return _this5;
-	    }
-
-	    (0, _createClass3.default)(PageTitles, [{
-	        key: 'render',
-	        value: function render() {
-	            var matches = getTitles(this.props.page.content);
-	            var i = 0;
-	            var PageTitleList2 = matches.map(function (match) {
-	                i += 1;
-	                var classTag = match[0];
-	                var titlePage = match[1];
-	                var key = classTag + '-' + titlePage;
-	                return _react2.default.createElement(PageTitle, { key: key, classTag: classTag, titlePage: titlePage });
-	            });
-	            return _react2.default.createElement(
-	                'ul',
-	                { className: 'page-titles' },
-	                PageTitleList2
-	            );
-	        }
-	    }]);
-	    return PageTitles;
-	}(_react2.default.Component);
-
-	;
-
-	var PageTitle = function (_React$Component5) {
-	    (0, _inherits3.default)(PageTitle, _React$Component5);
-
-	    function PageTitle() {
-	        (0, _classCallCheck3.default)(this, PageTitle);
-	        return (0, _possibleConstructorReturn3.default)(this, (PageTitle.__proto__ || (0, _getPrototypeOf2.default)(PageTitle)).apply(this, arguments));
-	    }
-
-	    (0, _createClass3.default)(PageTitle, [{
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'li',
-	                { className: this.props.classTag },
-	                this.props.titlePage
-	            );
-	        }
-	    }]);
-	    return PageTitle;
-	}(_react2.default.Component);
-
-	;
-
-	function getTitles(content) {
-	    var myRegexp = /\<(h\d)\>([\w\s\(\)\?]*)\<\/h\d\>/;
-	    var matches = [];
-	    var match = myRegexp.exec(content);
-	    console.log(content);
-	    while (match = myRegexp.exec(content)) {
-	        matches.push([match[1], match[2]]);
-	        content = content.replace(myRegexp, "");
-	    }
-	    return matches;
-	}
-
-	// End of page title management
-
-
-	// Display all the page
-
-	var ApiDoc = function (_React$Component6) {
-	    (0, _inherits3.default)(ApiDoc, _React$Component6);
+	var ApiDoc = function (_React$Component) {
+	    (0, _inherits3.default)(ApiDoc, _React$Component);
 
 	    function ApiDoc(props) {
 	        (0, _classCallCheck3.default)(this, ApiDoc);
 
-	        var _this7 = (0, _possibleConstructorReturn3.default)(this, (ApiDoc.__proto__ || (0, _getPrototypeOf2.default)(ApiDoc)).call(this, props));
+	        var _this = (0, _possibleConstructorReturn3.default)(this, (ApiDoc.__proto__ || (0, _getPrototypeOf2.default)(ApiDoc)).call(this, props));
 
-	        _this7.state = {
+	        _this.state = {
 	            selectedCategory: '',
 	            selectedPage: '',
 	            page: ''
 	        };
-	        return _this7;
+	        return _this;
 	    }
 
 	    (0, _createClass3.default)(ApiDoc, [{
@@ -367,17 +155,17 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'left-panel' },
-	                        _react2.default.createElement(PageList, { url: 'category/1/pages', selectedPage: this.state.selectedPage, selectedCategory: this.state.selectedCategory, onUpdatePage: this.updatePage.bind(this) })
+	                        _react2.default.createElement(_pageList2.default, { url: 'category/1/pages', selectedPage: this.state.selectedPage, selectedCategory: this.state.selectedCategory, onUpdatePage: this.updatePage.bind(this) })
 	                    ),
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'main-panel' },
-	                        _react2.default.createElement(PageContent, { selectedPage: this.state.selectedPage, page: this.state.page })
+	                        _react2.default.createElement(_pageContent2.default, { selectedPage: this.state.selectedPage, page: this.state.page })
 	                    ),
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'right-panel' },
-	                        _react2.default.createElement(PageTitles, { url: '/page/1', selectedPage: this.state.selectedPage, page: this.state.page })
+	                        _react2.default.createElement(_pageTitles2.default, { url: '/page/1', selectedPage: this.state.selectedPage, page: this.state.page })
 	                    ),
 	                    _react2.default.createElement('div', { className: 'footer' })
 	                )
@@ -23322,10 +23110,6 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactDom = __webpack_require__(120);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var $ = __webpack_require__(259);
@@ -33654,6 +33438,335 @@
 	return jQuery;
 	} );
 
+
+/***/ },
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _getPrototypeOf = __webpack_require__(1);
+
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+	var _classCallCheck2 = __webpack_require__(27);
+
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+	var _createClass2 = __webpack_require__(28);
+
+	var _createClass3 = _interopRequireDefault(_createClass2);
+
+	var _possibleConstructorReturn2 = __webpack_require__(32);
+
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+	var _inherits2 = __webpack_require__(79);
+
+	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _react = __webpack_require__(87);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var $ = __webpack_require__(259);
+
+	var PageList = function (_React$Component) {
+	    (0, _inherits3.default)(PageList, _React$Component);
+
+	    function PageList(props) {
+	        (0, _classCallCheck3.default)(this, PageList);
+
+	        var _this = (0, _possibleConstructorReturn3.default)(this, (PageList.__proto__ || (0, _getPrototypeOf2.default)(PageList)).call(this, props));
+
+	        _this.state = { pages: [], selectedPage: '' };
+	        return _this;
+	    }
+
+	    (0, _createClass3.default)(PageList, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var url = "/pages";
+	            if (this.props.selectedCategory) {
+	                url = "/category/" + this.props.selectedCategory + "/pages";
+	            }
+	            $.ajax({
+	                url: url,
+	                dataType: 'json',
+	                cache: false,
+	                success: function (data) {
+	                    this.setState({ pages: data, selectedPage: data[0] ? data[0].id : '' });
+	                    this.props.onUpdatePage(data[0] ? data[0].id : '');
+	                }.bind(this),
+	                error: function (xhr, status, err) {
+	                    console.error(this.props.url, status, err.toString());
+	                }.bind(this)
+	            });
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {
+	            if (prevProps.selectedCategory != this.props.selectedCategory) {
+	                var url = "/pages";
+	                if (this.props.selectedCategory) {
+	                    url = "/category/" + this.props.selectedCategory + "/pages";
+	                }
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: false,
+	                    success: function (data) {
+	                        this.setState({ pages: data, selectedPage: data[0] ? data[0].id : '' });
+	                        this.props.onUpdatePage(data[0] ? data[0].id : '');
+	                    }.bind(this),
+	                    error: function (xhr, status, err) {
+	                        console.error(this.props.url, status, err.toString());
+	                    }.bind(this)
+	                });
+	            }
+	        }
+	    }, {
+	        key: 'changePage',
+	        value: function changePage(id) {
+	            this.setState(function (prevState, props) {
+	                return {
+	                    pages: prevState.pages,
+	                    selectedPage: id
+	                };
+	            });
+	            this.props.onUpdatePage(id);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this2 = this;
+
+	            var PageLabelList = [];
+	            this.state.pages.forEach(function (page) {
+	                PageLabelList.push(_react2.default.createElement(PageLink, { selectedPage: _this2.props.selectedPage, onChangePage: _this2.changePage.bind(_this2), page: page, key: page.id }));
+	            });
+	            return _react2.default.createElement(
+	                'ul',
+	                { className: 'page-label-list' },
+	                PageLabelList
+	            );
+	        }
+	    }]);
+	    return PageList;
+	}(_react2.default.Component);
+
+	;
+
+	var PageLink = function (_React$Component2) {
+	    (0, _inherits3.default)(PageLink, _React$Component2);
+
+	    function PageLink() {
+	        (0, _classCallCheck3.default)(this, PageLink);
+	        return (0, _possibleConstructorReturn3.default)(this, (PageLink.__proto__ || (0, _getPrototypeOf2.default)(PageLink)).apply(this, arguments));
+	    }
+
+	    (0, _createClass3.default)(PageLink, [{
+	        key: 'setPage',
+	        value: function setPage(id) {
+	            this.props.onChangePage(id);
+	        }
+	    }, {
+	        key: 'isActive',
+	        value: function isActive(id) {
+	            return "page-label " + (id == this.props.selectedPage ? 'active' : 'default');
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'li',
+	                { className: this.isActive(this.props.page.id), onClick: this.setPage.bind(this, this.props.page.id) },
+	                this.props.page.label
+	            );
+	        }
+	    }]);
+	    return PageLink;
+	}(_react2.default.Component);
+
+	;
+
+	exports.default = PageList;
+
+/***/ },
+/* 261 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _getPrototypeOf = __webpack_require__(1);
+
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+	var _classCallCheck2 = __webpack_require__(27);
+
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+	var _createClass2 = __webpack_require__(28);
+
+	var _createClass3 = _interopRequireDefault(_createClass2);
+
+	var _possibleConstructorReturn2 = __webpack_require__(32);
+
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+	var _inherits2 = __webpack_require__(79);
+
+	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _react = __webpack_require__(87);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var PageContent = function (_React$Component) {
+	    (0, _inherits3.default)(PageContent, _React$Component);
+
+	    function PageContent(props) {
+	        (0, _classCallCheck3.default)(this, PageContent);
+
+	        var _this = (0, _possibleConstructorReturn3.default)(this, (PageContent.__proto__ || (0, _getPrototypeOf2.default)(PageContent)).call(this, props));
+
+	        _this.state = { page: {} };
+	        return _this;
+	    }
+
+	    (0, _createClass3.default)(PageContent, [{
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement("div", { className: "page-content", dangerouslySetInnerHTML: { __html: this.props.page.content } });
+	        }
+	    }]);
+	    return PageContent;
+	}(_react2.default.Component);
+
+	;
+
+	exports.default = PageContent;
+
+/***/ },
+/* 262 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _getPrototypeOf = __webpack_require__(1);
+
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+	var _classCallCheck2 = __webpack_require__(27);
+
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+	var _createClass2 = __webpack_require__(28);
+
+	var _createClass3 = _interopRequireDefault(_createClass2);
+
+	var _possibleConstructorReturn2 = __webpack_require__(32);
+
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+	var _inherits2 = __webpack_require__(79);
+
+	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _react = __webpack_require__(87);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var PageTitles = function (_React$Component) {
+	    (0, _inherits3.default)(PageTitles, _React$Component);
+
+	    function PageTitles(props) {
+	        (0, _classCallCheck3.default)(this, PageTitles);
+
+	        var _this = (0, _possibleConstructorReturn3.default)(this, (PageTitles.__proto__ || (0, _getPrototypeOf2.default)(PageTitles)).call(this, props));
+
+	        _this.state = { page: [] };
+	        return _this;
+	    }
+
+	    (0, _createClass3.default)(PageTitles, [{
+	        key: 'render',
+	        value: function render() {
+	            var matches = getTitles(this.props.page.content);
+	            var i = 0;
+	            var PageTitleList2 = matches.map(function (match) {
+	                i += 1;
+	                var classTag = match[0];
+	                var titlePage = match[1];
+	                var key = classTag + '-' + titlePage;
+	                return _react2.default.createElement(PageTitle, { key: key, classTag: classTag, titlePage: titlePage });
+	            });
+	            return _react2.default.createElement(
+	                'ul',
+	                { className: 'page-titles' },
+	                PageTitleList2
+	            );
+	        }
+	    }]);
+	    return PageTitles;
+	}(_react2.default.Component);
+
+	;
+
+	var PageTitle = function (_React$Component2) {
+	    (0, _inherits3.default)(PageTitle, _React$Component2);
+
+	    function PageTitle() {
+	        (0, _classCallCheck3.default)(this, PageTitle);
+	        return (0, _possibleConstructorReturn3.default)(this, (PageTitle.__proto__ || (0, _getPrototypeOf2.default)(PageTitle)).apply(this, arguments));
+	    }
+
+	    (0, _createClass3.default)(PageTitle, [{
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'li',
+	                { className: this.props.classTag },
+	                this.props.titlePage
+	            );
+	        }
+	    }]);
+	    return PageTitle;
+	}(_react2.default.Component);
+
+	;
+
+	function getTitles(content) {
+	    var myRegexp = /\<(h\d)\>([\w\s\(\)\?]*)\<\/h\d\>/;
+	    var matches = [];
+	    var match = myRegexp.exec(content);
+	    console.log(content);
+	    while (match = myRegexp.exec(content)) {
+	        matches.push([match[1], match[2]]);
+	        content = content.replace(myRegexp, "");
+	    }
+	    return matches;
+	}
+
+	exports.default = PageTitles;
 
 /***/ }
 /******/ ]);
