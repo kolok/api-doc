@@ -17,14 +17,16 @@ class ApiDoc extends React.Component {
         };
     }
     updateCategory(id) {
-        this.setState({
+        //console.log(id);
+        this.setState((prevState, props) => ({
             selectedCategory: id,
-            selectedPage:'',
-            page:''
-        });
+            selectedPage: prevState.selectedPage,
+            page: prevState.page
+        }));
     }
     updatePage(id) {
-
+        if (id !== '')
+        {
             var url = "/page/" + id;
             $.ajax({
                 url: url,
@@ -41,7 +43,15 @@ class ApiDoc extends React.Component {
                     console.error(this.props.url, status, err.toString());
                 }.bind(this)
             });
-
+        }
+        else
+        {
+            this.setState((prevState, props) => ({
+                selectedCategory: prevState.selectedCategory,
+                selectedPage: '',
+                page: ''
+            }));
+        }
     }
     render() {
         return ( 

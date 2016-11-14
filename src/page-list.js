@@ -7,6 +7,8 @@ class PageList extends React.Component {
         this.state = {pages: [], selectedPage: ''};
     }
     componentDidMount() {
+        //console.log('PageList.componentDidMount');
+        //console.log(this.props);
         var url = "/pages";
         if (this.props.selectedCategory)
         {
@@ -26,6 +28,8 @@ class PageList extends React.Component {
         });
     }
     componentDidUpdate(prevProps, prevState) {
+        //console.log('PageList.componentDidUpdate');
+        //console.log(this.props);
         if (prevProps.selectedCategory != this.props.selectedCategory)
         {
             var url = "/pages";
@@ -48,15 +52,15 @@ class PageList extends React.Component {
         }
     }
     changePage(id) {
+        //console.log('PageList.changePage');
+        //console.log(this.props);
         this.setState((prevState, props) => ({
             pages: prevState.pages,
             selectedPage: id
         }));
         this.props.onUpdatePage(id);
-
     }
     render() {
-
         var PageLabelList = [];
         this.state.pages.forEach( (page) => {
             PageLabelList.push(

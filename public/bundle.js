@@ -113,34 +113,46 @@
 	    (0, _createClass3.default)(ApiDoc, [{
 	        key: 'updateCategory',
 	        value: function updateCategory(id) {
-	            this.setState({
-	                selectedCategory: id,
-	                selectedPage: '',
-	                page: ''
+	            //console.log(id);
+	            this.setState(function (prevState, props) {
+	                return {
+	                    selectedCategory: id,
+	                    selectedPage: prevState.selectedPage,
+	                    page: prevState.page
+	                };
 	            });
 	        }
 	    }, {
 	        key: 'updatePage',
 	        value: function updatePage(id) {
-
-	            var url = "/page/" + id;
-	            $.ajax({
-	                url: url,
-	                dataType: 'json',
-	                cache: false,
-	                success: function (data) {
-	                    this.setState(function (prevState, props) {
-	                        return {
-	                            selectedCategory: prevState.selectedCategory,
-	                            selectedPage: id,
-	                            page: data
-	                        };
-	                    });
-	                }.bind(this),
-	                error: function (xhr, status, err) {
-	                    console.error(this.props.url, status, err.toString());
-	                }.bind(this)
-	            });
+	            if (id !== '') {
+	                var url = "/page/" + id;
+	                $.ajax({
+	                    url: url,
+	                    dataType: 'json',
+	                    cache: false,
+	                    success: function (data) {
+	                        this.setState(function (prevState, props) {
+	                            return {
+	                                selectedCategory: prevState.selectedCategory,
+	                                selectedPage: id,
+	                                page: data
+	                            };
+	                        });
+	                    }.bind(this),
+	                    error: function (xhr, status, err) {
+	                        console.error(this.props.url, status, err.toString());
+	                    }.bind(this)
+	                });
+	            } else {
+	                this.setState(function (prevState, props) {
+	                    return {
+	                        selectedCategory: prevState.selectedCategory,
+	                        selectedPage: '',
+	                        page: ''
+	                    };
+	                });
+	            }
 	        }
 	    }, {
 	        key: 'render',
@@ -23124,7 +23136,10 @@
 
 	        var _this = (0, _possibleConstructorReturn3.default)(this, (CategoryMenu.__proto__ || (0, _getPrototypeOf2.default)(CategoryMenu)).call(this, props));
 
-	        _this.state = { selectedCategory: '1', categories: [] };
+	        _this.state = {
+	            selectedCategory: '',
+	            categories: []
+	        };
 	        return _this;
 	    }
 
@@ -33492,6 +33507,8 @@
 	    (0, _createClass3.default)(PageList, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
+	            //console.log('PageList.componentDidMount');
+	            //console.log(this.props);
 	            var url = "/pages";
 	            if (this.props.selectedCategory) {
 	                url = "/category/" + this.props.selectedCategory + "/pages";
@@ -33512,6 +33529,8 @@
 	    }, {
 	        key: 'componentDidUpdate',
 	        value: function componentDidUpdate(prevProps, prevState) {
+	            //console.log('PageList.componentDidUpdate');
+	            //console.log(this.props);
 	            if (prevProps.selectedCategory != this.props.selectedCategory) {
 	                var url = "/pages";
 	                if (this.props.selectedCategory) {
@@ -33534,6 +33553,8 @@
 	    }, {
 	        key: 'changePage',
 	        value: function changePage(id) {
+	            //console.log('PageList.changePage');
+	            //console.log(this.props);
 	            this.setState(function (prevState, props) {
 	                return {
 	                    pages: prevState.pages,
@@ -33637,19 +33658,21 @@
 	var PageContent = function (_React$Component) {
 	    (0, _inherits3.default)(PageContent, _React$Component);
 
-	    function PageContent(props) {
+	    function PageContent() {
 	        (0, _classCallCheck3.default)(this, PageContent);
-
-	        var _this = (0, _possibleConstructorReturn3.default)(this, (PageContent.__proto__ || (0, _getPrototypeOf2.default)(PageContent)).call(this, props));
-
-	        _this.state = { page: {} };
-	        return _this;
+	        return (0, _possibleConstructorReturn3.default)(this, (PageContent.__proto__ || (0, _getPrototypeOf2.default)(PageContent)).apply(this, arguments));
 	    }
 
 	    (0, _createClass3.default)(PageContent, [{
 	        key: "render",
 	        value: function render() {
-	            return _react2.default.createElement("div", { className: "page-content", dangerouslySetInnerHTML: { __html: this.props.page.content } });
+	            //console.log('PageContent.render');
+	            //console.log(this.props.page.content);
+	            if (this.props.page.content !== undefined) {
+	                return _react2.default.createElement("div", { className: "page-content", dangerouslySetInnerHTML: { __html: this.props.page.content } });
+	            } else {
+	                return null;
+	            }
 	        }
 	    }]);
 	    return PageContent;
@@ -33698,32 +33721,32 @@
 	var PageTitles = function (_React$Component) {
 	    (0, _inherits3.default)(PageTitles, _React$Component);
 
-	    function PageTitles(props) {
+	    function PageTitles() {
 	        (0, _classCallCheck3.default)(this, PageTitles);
-
-	        var _this = (0, _possibleConstructorReturn3.default)(this, (PageTitles.__proto__ || (0, _getPrototypeOf2.default)(PageTitles)).call(this, props));
-
-	        _this.state = { page: [] };
-	        return _this;
+	        return (0, _possibleConstructorReturn3.default)(this, (PageTitles.__proto__ || (0, _getPrototypeOf2.default)(PageTitles)).apply(this, arguments));
 	    }
 
 	    (0, _createClass3.default)(PageTitles, [{
 	        key: 'render',
 	        value: function render() {
-	            var matches = getTitles(this.props.page.content);
-	            var i = 0;
-	            var PageTitleList2 = matches.map(function (match) {
-	                i += 1;
-	                var classTag = match[0];
-	                var titlePage = match[1];
-	                var key = classTag + '-' + titlePage;
-	                return _react2.default.createElement(PageTitle, { key: key, classTag: classTag, titlePage: titlePage });
-	            });
-	            return _react2.default.createElement(
-	                'ul',
-	                { className: 'page-titles' },
-	                PageTitleList2
-	            );
+	            if (this.props.page.content !== undefined) {
+	                var matches = getTitles(this.props.page.content);
+	                var i = 0;
+	                var PageTitleList2 = matches.map(function (match) {
+	                    i += 1;
+	                    var classTag = match[0];
+	                    var titlePage = match[1];
+	                    var key = classTag + '-' + titlePage;
+	                    return _react2.default.createElement(PageTitle, { key: key, classTag: classTag, titlePage: titlePage });
+	                });
+	                return _react2.default.createElement(
+	                    'ul',
+	                    { className: 'page-titles' },
+	                    PageTitleList2
+	                );
+	            } else {
+	                return null;
+	            }
 	        }
 	    }]);
 	    return PageTitles;
@@ -33758,7 +33781,7 @@
 	    var myRegexp = /\<(h\d)\>([\w\s\(\)\?]*)\<\/h\d\>/;
 	    var matches = [];
 	    var match = myRegexp.exec(content);
-	    console.log(content);
+	    //console.log(content);
 	    while (match = myRegexp.exec(content)) {
 	        matches.push([match[1], match[2]]);
 	        content = content.replace(myRegexp, "");

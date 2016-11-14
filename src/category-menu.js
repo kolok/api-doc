@@ -6,7 +6,10 @@ var $ = require("jquery");
 class CategoryMenu extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {selectedCategory:'1',categories: []};
+        this.state = {
+            selectedCategory: '',
+            categories: []
+        };
     }
     componentDidMount() {
         $.ajax({

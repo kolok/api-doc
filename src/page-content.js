@@ -1,15 +1,20 @@
 import React from 'react';
 
 class PageContent extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {page: {}};
-    }
     render() {
-        return (
-            <div className="page-content" dangerouslySetInnerHTML={{__html: this.props.page.content}}>
-            </div>
-            );
+        //console.log('PageContent.render');
+        //console.log(this.props.page.content);
+        if ( this.props.page.content !== undefined )
+        {
+            return (
+                <div className="page-content" dangerouslySetInnerHTML={{__html: this.props.page.content}}>
+                </div>
+                );
+        }
+        else
+        {
+            return null;
+        }
     }
 };
 
