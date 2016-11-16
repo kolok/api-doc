@@ -24,6 +24,7 @@ You can inject table in DB:
 . add a footer, the middle windows should be crawlable
 . add a bigger header
 . add a default page
+. add config file management
 . manage apply with flux architecture
 . manage authentication
 . manage edition in line
