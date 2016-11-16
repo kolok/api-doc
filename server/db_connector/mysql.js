@@ -3,9 +3,9 @@ class MyDb {
     constructor() {
         this.mysql      = require('mysql');
         this.connection = this.mysql.createConnection({
-            socketPath : '/tmp/webo-mysql-base.sock',
+            host       : '127.0.0.1',
             user       : 'root',
-            password   : '',
+            password   : 'root',
             database   : 'api_doc'
         });
     }
