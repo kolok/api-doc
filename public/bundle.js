@@ -160,7 +160,12 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'main-page' },
-	                _react2.default.createElement(_categoryMenu2.default, { url: '/categories', onUpdateCategory: this.updateCategory.bind(this) }),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'main-header' },
+	                    _react2.default.createElement('img', { src: 'images/React.png' }),
+	                    _react2.default.createElement(_categoryMenu2.default, { url: '/categories', onUpdateCategory: this.updateCategory.bind(this) })
+	                ),
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'main-content' },
@@ -180,6 +185,15 @@
 	                        _react2.default.createElement(_pageTitles2.default, { url: '/page/1', selectedPage: this.state.selectedPage, page: this.state.page })
 	                    ),
 	                    _react2.default.createElement('div', { className: 'footer' })
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'main-footer' },
+	                    _react2.default.createElement(
+	                        'p',
+	                        null,
+	                        ' footer : this is a footer, feel free to add your own useful information...'
+	                    )
 	                )
 	            );
 	        }

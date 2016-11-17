@@ -56,7 +56,10 @@ class ApiDoc extends React.Component {
     render() {
         return ( 
             <div className="main-page">
-                <CategoryMenu url="/categories" onUpdateCategory={this.updateCategory.bind(this)} />
+                <div className="main-header">
+                    <img src="images/React.png"/>
+                    <CategoryMenu url="/categories" onUpdateCategory={this.updateCategory.bind(this)} />
+                </div>
                 <div className="main-content">
                     <div className="left-panel">
                         <PageList url="category/1/pages" selectedPage={this.state.selectedPage} selectedCategory={this.state.selectedCategory} onUpdatePage={this.updatePage.bind(this)} />
@@ -69,6 +72,9 @@ class ApiDoc extends React.Component {
                     </div>
                     <div className="footer">
                     </div>
+                </div>
+                <div className="main-footer">
+                    <p> footer : this is a footer, feel free to add your own useful information...</p>
                 </div>
             </div>
             );

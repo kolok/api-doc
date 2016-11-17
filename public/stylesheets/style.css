@@ -1,0 +1,90 @@
+/* FROM HERE, IT IS THE APP STYLE */
+
+.menu {
+    display: flex;
+}
+
+.menu:nth-child(2)
+{
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0px;
+}
+
+#root {
+    height: 100%;
+}
+
+.main-page {
+    display:flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.main-content {
+    flex: 1;
+    display:flex;
+}
+
+.left-panel {
+    min-width: 300px;
+}
+
+.main-panel {
+    flex: 1;
+    overflow-y: scroll;
+}
+
+.main-footer {
+    padding-left:40px;
+    background-color: #222;
+    color: white;
+}
+
+.main-header {
+    background-color: #222;
+    color: white;
+}
+
+.right-panel {
+    min-width: 300px;
+}
+
+.menu-item {
+    padding: 5px 10px;
+}
+
+.active {
+    font-weight: bold;
+}
+
+.page-label {
+    list-style-type: none;
+}
+
+.page-titles {
+    list-style-type: none;
+}
+
+.page-titles > .h1 {
+    margin-left: 5px;
+}
+
+.page-titles > .h2 {
+    margin-left: 15px;
+}
+
+.page-titles > .h3 {
+    margin-left: 25px;
+}
+
+.page-titles > .h4 {
+    margin-left: 35px;
+}
+

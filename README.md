@@ -25,7 +25,8 @@ You can inject table in DB:
 . add a bigger header
 . add a default page
 . add config file management
-. manage apply with flux architecture
+. manage application as a docker
+. apply flux architecture
 . manage authentication
 . manage edition in line
 
