@@ -1,13 +1,10 @@
+var config = require('config');
 
 class MyDb {
     constructor() {
         this.mysql      = require('mysql');
-        this.connection = this.mysql.createConnection({
-            host       : '127.0.0.1',
-            user       : 'root',
-            password   : 'root',
-            database   : 'api_doc'
-        });
+        var dbConfig = config.get('MyDb.dbConfig');
+        this.connection = this.mysql.createConnection(dbConfig);
     }
     connect() {
         this.connection.connect();
