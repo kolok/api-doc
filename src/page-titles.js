@@ -10,9 +10,10 @@ class PageTitles extends React.Component {
                 i+=1;
                 var classTag = match[0];
                 var titlePage = match[1];
-                var key = classTag+'-'+titlePage;
+                var identifierTag = match[2];
+                var key = match.join('-');
                 return (
-                    <PageTitle key={key} classTag={classTag} titlePage={titlePage} />
+                    <PageTitle key={key} identifierTag={identifierTag} classTag={classTag} titlePage={titlePage} />
                     );
             });
             return (
@@ -29,20 +30,39 @@ class PageTitles extends React.Component {
 };
 
 class PageTitle extends React.Component {
+    anchorThis(id) {
+        window.location = window.location.origin + "#" + id
+    }
     render() {
-        return (
-            <li className={this.props.classTag}>{this.props.titlePage}</li>
-            );
+        if (this.props.identifierTag !== undefined)
+        {
+            return (
+                <li className={this.props.classTag} onClick={this.anchorThis.bind(this, this.props.identifierTag)}>{this.props.titlePage}</li>
+                );
+        }
+        else
+        {
+            return (
+                <li className={this.props.classTag}>{this.props.titlePage}</li>
+                );
+        }
     }
 };
 
 function getTitles(content) {
-    var myRegexp = /\<(h\d)\>([\w\s\(\)\?]*)\<\/h\d\>/;
+    var myRegexp = /\<(h\d)(.*)\>([\w\s\(\)\?]*)\<\/h\d\>/;
     var matches = [];
     var match = myRegexp.exec(content);
-    //console.log(content);
     while (match = myRegexp.exec(content)) {
-        matches.push([match[1], match[2]]);
+        var id = undefined;
+        if (match[2] !== "")
+        {
+            var myRegexp2 = /id=[\"\'](\w+)[\"\']/;
+            var matchId = myRegexp2.exec(match[2]);
+            if (matchId !== null)
+            { id = matchId[1] }
+        }
+        matches.push([match[1], match[3], id]);
         content = content.replace(myRegexp, "");
     }
     return matches;

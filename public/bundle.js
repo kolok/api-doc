@@ -33750,8 +33750,9 @@
 	                    i += 1;
 	                    var classTag = match[0];
 	                    var titlePage = match[1];
-	                    var key = classTag + '-' + titlePage;
-	                    return _react2.default.createElement(PageTitle, { key: key, classTag: classTag, titlePage: titlePage });
+	                    var identifierTag = match[2];
+	                    var key = match.join('-');
+	                    return _react2.default.createElement(PageTitle, { key: key, identifierTag: identifierTag, classTag: classTag, titlePage: titlePage });
 	                });
 	                return _react2.default.createElement(
 	                    'ul',
@@ -33777,13 +33778,26 @@
 	    }
 
 	    (0, _createClass3.default)(PageTitle, [{
+	        key: 'anchorThis',
+	        value: function anchorThis(id) {
+	            window.location = window.location.origin + "#" + id;
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
-	            return _react2.default.createElement(
-	                'li',
-	                { className: this.props.classTag },
-	                this.props.titlePage
-	            );
+	            if (this.props.identifierTag !== undefined) {
+	                return _react2.default.createElement(
+	                    'li',
+	                    { className: this.props.classTag, onClick: this.anchorThis.bind(this, this.props.identifierTag) },
+	                    this.props.titlePage
+	                );
+	            } else {
+	                return _react2.default.createElement(
+	                    'li',
+	                    { className: this.props.classTag },
+	                    this.props.titlePage
+	                );
+	            }
 	        }
 	    }]);
 	    return PageTitle;
@@ -33792,12 +33806,19 @@
 	;
 
 	function getTitles(content) {
-	    var myRegexp = /\<(h\d)\>([\w\s\(\)\?]*)\<\/h\d\>/;
+	    var myRegexp = /\<(h\d)(.*)\>([\w\s\(\)\?]*)\<\/h\d\>/;
 	    var matches = [];
 	    var match = myRegexp.exec(content);
-	    //console.log(content);
 	    while (match = myRegexp.exec(content)) {
-	        matches.push([match[1], match[2]]);
+	        var id = undefined;
+	        if (match[2] !== "") {
+	            var myRegexp2 = /id=[\"\'](\w+)[\"\']/;
+	            var matchId = myRegexp2.exec(match[2]);
+	            if (matchId !== null) {
+	                id = matchId[1];
+	            }
+	        }
+	        matches.push([match[1], match[3], id]);
 	        content = content.replace(myRegexp, "");
 	    }
 	    return matches;
