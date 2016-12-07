@@ -50,7 +50,7 @@ class PageTitle extends React.Component {
 };
 
 function getTitles(content) {
-    var myRegexp = /\<(h\d)(.*)\>([\w\s\(\)\?]*)\<\/h\d\>/;
+    var myRegexp = /<(h\d)([^>]*)>([^<]*)<\/h\d>/;
     var matches = [];
     var match = myRegexp.exec(content);
     while (match = myRegexp.exec(content)) {
