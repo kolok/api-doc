@@ -7,12 +7,10 @@ class PageList extends React.Component {
         this.state = {pages: [], selectedPage: ''};
     }
     componentDidMount() {
-        //console.log('PageList.componentDidMount');
-        //console.log(this.props);
-        var url = "/pages";
+        var url = "/page_tree";
         if (this.props.selectedCategory)
         {
-            url = "/category/" + this.props.selectedCategory+"/pages";
+            url = "/category/" + this.props.selectedCategory+"/page_tree";
         }
         $.ajax({
             url: url,
@@ -28,14 +26,12 @@ class PageList extends React.Component {
         });
     }
     componentDidUpdate(prevProps, prevState) {
-        //console.log('PageList.componentDidUpdate');
-        //console.log(this.props);
         if (prevProps.selectedCategory != this.props.selectedCategory)
         {
-            var url = "/pages";
+            var url = "/page_tree";
             if (this.props.selectedCategory)
             {
-                url = "/category/" + this.props.selectedCategory+"/pages";
+                url = "/category/" + this.props.selectedCategory+"/page_tree";
             }
             $.ajax({
                 url: url,
@@ -52,21 +48,31 @@ class PageList extends React.Component {
         }
     }
     changePage(id) {
-        //console.log('PageList.changePage');
-        //console.log(this.props);
         this.setState((prevState, props) => ({
             pages: prevState.pages,
             selectedPage: id
         }));
         this.props.onUpdatePage(id);
     }
+    getTreeFromPages(pages,level) {
+        var tree = [];
+        if (pages !== undefined)
+        {
+            pages.forEach( page => {
+                tree.push(
+                    <PageLink selectedPage={this.props.selectedPage} onChangePage={this.changePage.bind(this)} page={page} key={page.id} pageLevel={level}/>
+                    );
+                if (page.list !== undefined) {
+                    tree.push(
+                        this.getTreeFromPages(page.list,level+1)
+                    );
+                }
+            });
+        }
+        return tree;
+    }
     render() {
-        var PageLabelList = [];
-        this.state.pages.forEach( (page) => {
-            PageLabelList.push(
-                <PageLink selectedPage={this.props.selectedPage} onChangePage={this.changePage.bind(this)} page={page} key={page.id}/>
-                );
-        });
+        var PageLabelList = this.getTreeFromPages(this.state.pages,0);
         return (
             <ul className="page-label-list">
                 {PageLabelList}
@@ -75,12 +81,16 @@ class PageList extends React.Component {
     }
 };
 
+//Recurcive function to display tree
+
+
+
 class PageLink extends React.Component {
     setPage(id) {
         this.props.onChangePage(id);
     }
     isActive(id) {
-        return "page-label " + ( ( id == this.props.selectedPage ) ? 'active' : 'default');
+        return "page-label " + ( ( id == this.props.selectedPage ) ? 'active' : 'default') + ' level' + this.props.pageLevel;
     }
     render() {
         return (

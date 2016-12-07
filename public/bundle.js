@@ -33521,11 +33521,9 @@
 	    (0, _createClass3.default)(PageList, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            //console.log('PageList.componentDidMount');
-	            //console.log(this.props);
-	            var url = "/pages";
+	            var url = "/page_tree";
 	            if (this.props.selectedCategory) {
-	                url = "/category/" + this.props.selectedCategory + "/pages";
+	                url = "/category/" + this.props.selectedCategory + "/page_tree";
 	            }
 	            $.ajax({
 	                url: url,
@@ -33543,12 +33541,10 @@
 	    }, {
 	        key: 'componentDidUpdate',
 	        value: function componentDidUpdate(prevProps, prevState) {
-	            //console.log('PageList.componentDidUpdate');
-	            //console.log(this.props);
 	            if (prevProps.selectedCategory != this.props.selectedCategory) {
-	                var url = "/pages";
+	                var url = "/page_tree";
 	                if (this.props.selectedCategory) {
-	                    url = "/category/" + this.props.selectedCategory + "/pages";
+	                    url = "/category/" + this.props.selectedCategory + "/page_tree";
 	                }
 	                $.ajax({
 	                    url: url,
@@ -33567,8 +33563,6 @@
 	    }, {
 	        key: 'changePage',
 	        value: function changePage(id) {
-	            //console.log('PageList.changePage');
-	            //console.log(this.props);
 	            this.setState(function (prevState, props) {
 	                return {
 	                    pages: prevState.pages,
@@ -33578,14 +33572,25 @@
 	            this.props.onUpdatePage(id);
 	        }
 	    }, {
-	        key: 'render',
-	        value: function render() {
+	        key: 'getTreeFromPages',
+	        value: function getTreeFromPages(pages, level) {
 	            var _this2 = this;
 
-	            var PageLabelList = [];
-	            this.state.pages.forEach(function (page) {
-	                PageLabelList.push(_react2.default.createElement(PageLink, { selectedPage: _this2.props.selectedPage, onChangePage: _this2.changePage.bind(_this2), page: page, key: page.id }));
-	            });
+	            var tree = [];
+	            if (pages !== undefined) {
+	                pages.forEach(function (page) {
+	                    tree.push(_react2.default.createElement(PageLink, { selectedPage: _this2.props.selectedPage, onChangePage: _this2.changePage.bind(_this2), page: page, key: page.id, pageLevel: level }));
+	                    if (page.list !== undefined) {
+	                        tree.push(_this2.getTreeFromPages(page.list, level + 1));
+	                    }
+	                });
+	            }
+	            return tree;
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var PageLabelList = this.getTreeFromPages(this.state.pages, 0);
 	            return _react2.default.createElement(
 	                'ul',
 	                { className: 'page-label-list' },
@@ -33597,6 +33602,9 @@
 	}(_react2.default.Component);
 
 	;
+
+	//Recurcive function to display tree
+
 
 	var PageLink = function (_React$Component2) {
 	    (0, _inherits3.default)(PageLink, _React$Component2);
@@ -33614,7 +33622,7 @@
 	    }, {
 	        key: 'isActive',
 	        value: function isActive(id) {
-	            return "page-label " + (id == this.props.selectedPage ? 'active' : 'default');
+	            return "page-label " + (id == this.props.selectedPage ? 'active' : 'default') + ' level' + this.props.pageLevel;
 	        }
 	    }, {
 	        key: 'render',
