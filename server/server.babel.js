@@ -39,7 +39,8 @@ app.get('/page_tree', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     myDb.getPages( function(err, rows, fields) {
         if (err) throw err;
-        res.status(200).send(rows);
+        var tree = buildTreeFromRows(rows);
+        res.status(200).send(tree);
     });
 });
 
@@ -49,11 +50,17 @@ function buildTreeFromRows(rows){
     var tree = [];
 
     //iterate on rows until all rows are set in the tree
+    var nbPreviousRows = 9999;
     while (rows.length > 0)
     {
         var result = buildTree(tree,rows);
         tree = result[0];
         rows = result[1];
+        if (nbPreviousRows == rows.length)
+        {
+            rows = [];
+        }
+        nbPreviousRows = rows.length;
     }
     return tree;
 }
@@ -70,8 +77,9 @@ function buildTree(tree, rows)
     }
     //root ids
     var newRows = [];
+    var treeIsEmpty = (tree.length == 0);
     for(var i = 0; i < rows.length ; i++ ) {
-        if (tree.length == 0) {
+        if (treeIsEmpty) {
             if (h[rows[i].parent_id] == null)
             {
                 tree.push(rows[i]);
