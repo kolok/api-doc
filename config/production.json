@@ -1,7 +1,7 @@
 {
     "MyDb": {
         "dbConfig": {
-            "host"       : "127.0.0.1",
+            "host"       : "apidoc_db_1",
             "user"       : "root",
             "password"   : "root",
             "database"   : "api_doc"

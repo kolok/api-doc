@@ -1,17 +1,30 @@
 
 version: '2'
 
-services:
-   db:
-     image: mysql:5.7.16
-     ports:
-       - 3306:3306
-     volumes:
-       - "~/workspace/api_doc/.data/db:/var/lib/mysql"
-     restart: always
-     environment:
-       MYSQL_ROOT_PASSWORD: root
-       MYSQL_DATABASE: api_doc
-       MYSQL_USER: root
+#networks:
+#    intranet:
 
+services:
+    db:
+        image: mysql:5.7.16
+        ports:
+            - 3306:3306
+        volumes:
+            - "~/workspace/api_doc/.data/db:/var/lib/mysql"
+        restart: always
+        networks:
+            - default
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: api_doc
+            MYSQL_USER: root
+
+#    api-doc:
+#        image: api-doc-server:1.0
+#        ports:
+#            - 80:80
+#        depends_on:
+#            - db
+#        networks:
+#            - intranet
 

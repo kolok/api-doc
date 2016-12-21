@@ -27,3 +27,17 @@ You can inject table in DB:
 . manage authentication
 . manage edition in line
 
+
+
+
+
+
+
+### Docker management
+
+# Run by hand
+
+docker run --name apidoc_db_1 -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=api_doc -e MYSQL_USER=root -p 3306:3306 -v ~/workspace/api_doc/.data/db:/var/lib/mysql -d mysql:5.7.16
+docker build . --tag api-doc-server:1.0
+docker run -e NODE_ENV=production -d -p 3000:3000 --link apidoc_db_1 api-doc-server:1.0
+
