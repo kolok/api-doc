@@ -1,8 +1,4 @@
-
 version: '2'
-
-#networks:
-#    intranet:
 
 services:
     db:
@@ -12,19 +8,16 @@ services:
         volumes:
             - "~/workspace/api_doc/.data/db:/var/lib/mysql"
         restart: always
-        networks:
-            - default
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: api_doc
             MYSQL_USER: root
-
-#    api-doc:
-#        image: api-doc-server:1.0
-#        ports:
-#            - 80:80
-#        depends_on:
-#            - db
-#        networks:
-#            - intranet
-
+    api-doc:
+        build: .
+        image: api-doc-server:1.0
+        ports:
+            - 3000:3000
+        depends_on:
+            - db
+        environment:
+            NODE_ENV: production
