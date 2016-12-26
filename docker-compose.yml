@@ -3,10 +3,11 @@ version: '2'
 services:
     db:
         image: mysql:5.7.16
-#        ports:
-#            - 3306:3306
+#port binding is needed to populate it with command line
+        ports:
+            - 3306:3306
         volumes:
-            - "~/workspace/api_doc/.data/db:/var/lib/mysql"
+            - "./.data/db:/var/lib/mysql"
         restart: always
         environment:
             MYSQL_ROOT_PASSWORD: root
@@ -24,7 +25,7 @@ services:
     nginx:
         image: nginx
         volumes:
-            - "/home/noudard/workspace/api-doc/api-doc.conf:/etc/nginx/conf.d/api-doc.conf"
+            - "./api-doc.conf:/etc/nginx/conf.d/api-doc.conf"
         ports:
             - 80:80
         depends_on:
