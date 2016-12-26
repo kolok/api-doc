@@ -3,8 +3,8 @@ version: '2'
 services:
     db:
         image: mysql:5.7.16
-        ports:
-            - 3306:3306
+#        ports:
+#            - 3306:3306
         volumes:
             - "~/workspace/api_doc/.data/db:/var/lib/mysql"
         restart: always
@@ -15,9 +15,21 @@ services:
     api-doc:
         build: .
         image: api-doc-server:1.0
-        ports:
-            - 3000:3000
+#        ports:
+#            - 3000:3000
         depends_on:
             - db
         environment:
             NODE_ENV: production
+    nginx:
+        image: nginx
+        volumes:
+            - "/home/noudard/workspace/api-doc/api-doc.conf:/etc/nginx/conf.d/api-doc.conf"
+        ports:
+            - 80:80
+        depends_on:
+            - api-doc
+        environment:
+            - NGINX_HOST=apidoc.com
+            - NGINX_PORT=80
+        command: /bin/bash -c "rm /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
